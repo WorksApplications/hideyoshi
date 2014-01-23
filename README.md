@@ -1,0 +1,8 @@
+# ideal workspace initialization
+
+## how to build
+
+Use Maven3 to build. Try to execute `mvn install` at the root directory.
+
+To use IDE, we recommend to use Eclipse, [Lombok](http://projectlombok.org/) and [m2e plugin](http://eclipse.org/m2e/).
+After you install them, execute `File -> Import...` from menu bar. Choose `Existing Maven Projects` and import sub-modules as project.
