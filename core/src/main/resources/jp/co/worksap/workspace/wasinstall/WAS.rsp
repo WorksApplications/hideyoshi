@@ -1,0 +1,8 @@
+-OPT silentInstallLicenseAcceptance="true"
+-OPT disableOSPrereqChecking="true"
+-OPT installType="installNew"
+-OPT profileType="none"
+-OPT feature="samplesSelected"
+-OPT PROF_enableAdminSecurity="false"
+-OPT traceFormat=ALL
+-OPT traceLevel=INFO

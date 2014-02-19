@@ -1,0 +1,4 @@
+-OPT silentInstallLicenseAcceptance="true"
+-OPT disableOSPrereqChecking="true"
+-OPT traceFormat=ALL
+-OPT traceLevel=INFO
