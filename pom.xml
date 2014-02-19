@@ -223,11 +223,4 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <distributionManagement>
-    <site>
-      <id>github.pages</id>
-      <name>GitHub Pages</name>
-      <url>http://worksapplications.github.io/${project.artifactId}</url>
-    </site>
-  </distributionManagement>
 </project>
