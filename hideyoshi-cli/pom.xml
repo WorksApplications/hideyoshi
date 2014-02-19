@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>jp.co.worksap.workspace</groupId>
-    <artifactId>monkey-project</artifactId>
+    <artifactId>hideyoshi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>command-line</artifactId>
+  <artifactId>hideyoshi-cli</artifactId>
   <name>command line interface</name>
   <build>
     <plugins>
@@ -38,7 +38,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>hideyoshi-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

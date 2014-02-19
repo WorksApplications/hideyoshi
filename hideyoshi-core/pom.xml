@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>jp.co.worksap.workspace</groupId>
-    <artifactId>monkey-project</artifactId>
+    <artifactId>hideyoshi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>core</artifactId>
+  <artifactId>hideyoshi-core</artifactId>
   <name>core module</name>
   <dependencies>
     <dependency>
