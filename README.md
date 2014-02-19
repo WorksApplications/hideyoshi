@@ -1,5 +1,7 @@
 # ideal workspace initialization
 
+[![Build Status](https://travis-ci.org/WorksApplications/hideyoshi.png)](https://travis-ci.org/WorksApplications/hideyoshi)
+
 ## how to build
 
 Use Maven3 to build. Try to execute `mvn install` at the root directory.
