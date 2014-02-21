@@ -239,4 +239,17 @@
       <url>https://repo.eclipse.org/content/groups/releases/</url>
     </repository>
   </repositories>
+  <profiles>
+    <profile>
+      <!--
+        This profile will be used when this project is built on Travis CI,
+        because Travis CI does not have SSH private key to clone repository via SSH.
+        See GitInitializerTest for detail.
+      -->
+      <id>on-travis</id>
+      <properties>
+        <travis>TRUE</travis>
+      </properties>
+    </profile>
+  </profiles>
 </project>

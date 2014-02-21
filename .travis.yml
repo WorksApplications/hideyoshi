@@ -2,7 +2,7 @@ language: java
 jdk:
   - openjdk7
   - oraclejdk7
-script: "mvn clean install"
+script: "mvn clean install -P on-travis"
 notifications:
   email:
     recipients:

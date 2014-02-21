@@ -2,6 +2,7 @@ package jp.co.worksap.workspace.repository.git;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +25,12 @@ public class GitInitializerTest {
 
     @Test
     public void testCloneSsh() throws IOException {
+        assumeThat("Travis CI does not have SSH private key", isBuildOnTravis(), is(false));
         testClone(SSL_REPOSITORY);
+    }
+
+    private boolean isBuildOnTravis() {
+        return "TRUE".equals(System.getProperty("ON_TRAVIS", "FALSE"));
     }
 
     @Test
