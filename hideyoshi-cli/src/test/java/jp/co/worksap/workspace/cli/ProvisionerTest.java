@@ -21,6 +21,7 @@ import jp.co.worksap.workspace.lombok.LombokConfiguration;
 import jp.co.worksap.workspace.lombok.LombokInstaller;
 import jp.co.worksap.workspace.packagemanagement.Package;
 import jp.co.worksap.workspace.packagemanagement.PackageManagementFacade;
+import jp.co.worksap.workspace.repository.git.GitInitializer;
 import jp.co.worksap.workspace.wasinstall.WASInstaller;
 import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
 
@@ -50,6 +51,9 @@ public class ProvisionerTest {
     private WASInstaller wasInstaller;
     @Mock
     private WebSphereConfiguration wasConfigure;
+    @Mock
+    private GitInitializer gitInitializer;
+
     private Configuration configuration;
 
     @Before
@@ -61,7 +65,7 @@ public class ProvisionerTest {
     public void callPackageInstallWhenPackageIsNotEmpty() throws IOException {
         List<Package> packageList = Lists.newArrayList(Package.of("git"));
         configuration.setTargetPackages(packageList);
-        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure).execute(configuration), is(StatusCode.NORMAL));
+        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(packageManagerFacade, only()).install(Matchers.<Iterable<Package>> any());
     }
 
@@ -69,21 +73,21 @@ public class ProvisionerTest {
     public void skipPackageInstallWhenPackageIsEmpty() throws IOException {
         List<Package> emptyList = Lists.newArrayList();
         configuration.setTargetPackages(emptyList);
-        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure).execute(configuration), is(StatusCode.NORMAL));
+        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(packageManagerFacade, never()).install(Matchers.<Iterable<Package>> any());
     }
 
     @Test
     public void callEclipseInstallWhenEclipseConfigIsNonnull() throws IOException {
         configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", null, null, null));
-        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure).execute(configuration), is(StatusCode.NORMAL));
+        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(eclipseInstaller, only()).install(any(EclipseConfiguration.class), any(File.class));
     }
 
     @Test
     public void skipEclipseInstallWhenEclipseConfigIsNull() throws IOException {
         configuration.setEclipse(null);
-        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure).execute(configuration), is(StatusCode.NORMAL));
+        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(eclipseInstaller, never()).install(any(EclipseConfiguration.class), any(File.class));
     }
 
@@ -91,14 +95,14 @@ public class ProvisionerTest {
     public void callEclipsePluginInstallWhenEclipseConfigIsNonnull() throws IOException {
         List<EclipsePlugin> pluginList = Lists.newArrayList(EclipsePlugin.of("egit"));
         configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", pluginList, null, null));
-        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure).execute(configuration), is(StatusCode.NORMAL));
+        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(eclipsePluginInstaller, only()).install(any(EclipseConfiguration.class), any(File.class));
     }
 
     @Test
     public void skipEclipsePlugubInstallWhenEclipseConfigIsNull() throws IOException {
         configuration.setEclipse(null);
-        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure).execute(configuration), is(StatusCode.NORMAL));
+        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(eclipsePluginInstaller, never()).install(any(EclipseConfiguration.class), any(File.class));
     }
 
@@ -107,7 +111,7 @@ public class ProvisionerTest {
         List<EclipsePlugin> pluginList = Lists.newArrayList(EclipsePlugin.of("egit"));
         configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", pluginList, null, null));
         configuration.setLombok(LombokConfiguration.fromString("1.12.2"));
-        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure).execute(configuration), is(StatusCode.NORMAL));
+        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(lombokInstaller, only()).install(Matchers.<Optional<LombokConfiguration>> any(), any(File.class));
     }
 
@@ -116,7 +120,7 @@ public class ProvisionerTest {
         configuration.setEclipse(null);
         // even though lombok config exists, we need eclipse config
         configuration.setLombok(LombokConfiguration.fromString("1.12.2"));
-        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure).execute(configuration), is(StatusCode.NORMAL));
+        assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(lombokInstaller, never()).install(Matchers.<Optional<LombokConfiguration>> any(), any(File.class));
     }
 }

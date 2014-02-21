@@ -4,31 +4,34 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.IOException;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
+import java.util.Map;
 
 import jp.co.worksap.workspace.database.db2.DB2Configuration;
 import jp.co.worksap.workspace.database.db2.DB2Installer;
 import jp.co.worksap.workspace.ide.eclipse.EclipseConfiguration;
 import jp.co.worksap.workspace.ide.eclipse.EclipseInstaller;
 import jp.co.worksap.workspace.ide.eclipse.EclipsePluginInstaller;
-import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
-import jp.co.worksap.workspace.wasprofile.CommonWASConfiguration;
-import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
-import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
-import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
-import jp.co.worksap.workspace.wasprofile.GlobalSecurityConfigurationContainer;
-import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
-import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
-import jp.co.worksap.workspace.wasprofile.JVMHeapSizeConfiguration;
 import jp.co.worksap.workspace.lombok.LombokConfiguration;
 import jp.co.worksap.workspace.lombok.LombokInstaller;
 import jp.co.worksap.workspace.packagemanagement.Package;
 import jp.co.worksap.workspace.packagemanagement.PackageManagementFacade;
+import jp.co.worksap.workspace.repository.git.GitInitializer;
+import jp.co.worksap.workspace.repository.git.GitRepositoryConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstallConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstaller;
+import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
+import jp.co.worksap.workspace.wasprofile.CommonWASConfiguration;
+import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
+import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
+import jp.co.worksap.workspace.wasprofile.GlobalSecurityConfigurationContainer;
+import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
+import jp.co.worksap.workspace.wasprofile.JVMHeapSizeConfiguration;
+import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
+import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
 import lombok.extern.slf4j.Slf4j;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 
 @Slf4j
 final class Provisioner {
@@ -39,8 +42,9 @@ final class Provisioner {
     private final DB2Installer db2Installer;
     private final WASInstaller wasInstaller;
     private final WebSphereConfiguration wasConfigure;
+    private final GitInitializer gitInitializer;
 
-    Provisioner(PackageManagementFacade packageManagerFacade, EclipseInstaller eclipseInstaller, EclipsePluginInstaller eclipsePluginInstaller, LombokInstaller lombokInstaller, DB2Installer db2Installer, WASInstaller wasInstaller, WebSphereConfiguration wasConfigure) {
+    Provisioner(PackageManagementFacade packageManagerFacade, EclipseInstaller eclipseInstaller, EclipsePluginInstaller eclipsePluginInstaller, LombokInstaller lombokInstaller, DB2Installer db2Installer, WASInstaller wasInstaller, WebSphereConfiguration wasConfigure, GitInitializer gitInitializer) {
         this.packageManagerFacade = checkNotNull(packageManagerFacade);
         this.eclipseInstaller = checkNotNull(eclipseInstaller);
         this.eclipsePluginInstaller = checkNotNull(eclipsePluginInstaller);
@@ -48,6 +52,7 @@ final class Provisioner {
         this.db2Installer = checkNotNull(db2Installer);
         this.wasInstaller = checkNotNull(wasInstaller);
         this.wasConfigure = checkNotNull(wasConfigure);
+        this.gitInitializer = checkNotNull(gitInitializer);
     }
 
     StatusCode execute(Configuration configuration) throws IOException {
@@ -63,10 +68,20 @@ final class Provisioner {
             installDB2(configuration);
             installWAS(configuration);
             configureWebsphere(configuration);
+            cloneRepository(configuration);
             return StatusCode.NORMAL;
         } catch (RuntimeException e) {
             log.error("fail to provision", e);
             return StatusCode.ERROR;
+        }
+    }
+
+    private void cloneRepository(Configuration configuration) {
+        Map<String, GitRepositoryConfiguration> repository = configuration.getRepository();
+        if (repository == null || repository.isEmpty()) {
+            log.info("no Git repository is specified");
+        } else {
+            gitInitializer.initialize(repository, configuration.getGitHooks());
         }
     }
 
