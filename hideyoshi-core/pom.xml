@@ -8,19 +8,6 @@
   </parent>
   <artifactId>hideyoshi-core</artifactId>
   <name>core module</name>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemPropertyVariables>
-            <ON_TRAVIS>${travis}</ON_TRAVIS>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -71,4 +58,17 @@
       <artifactId>slf4j-simple</artifactId>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <!--
+        This profile will be used when this project is built on Travis CI,
+        because Travis CI does not have SSH private key to clone repository via SSH.
+        See GitInitializerTest for detail.
+      -->
+      <id>on-travis</id>
+      <properties>
+        <excludedGroups>jp.co.worksap.workspace.common.UseSsh</excludedGroups>
+      </properties>
+    </profile>
+  </profiles>
 </project>

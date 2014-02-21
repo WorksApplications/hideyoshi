@@ -2,13 +2,15 @@ package jp.co.worksap.workspace.repository.git;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
 
 import java.io.File;
 import java.io.IOException;
 
+import jp.co.worksap.workspace.common.UseSsh;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 public class GitInitializerTest {
@@ -23,14 +25,10 @@ public class GitInitializerTest {
         testClone(HTTPS_REPOSITORY);
     }
 
+    @Category(UseSsh.class)
     @Test
     public void testCloneSsh() throws IOException {
-        assumeThat("Travis CI does not have SSH private key", isBuildOnTravis(), is(false));
         testClone(SSL_REPOSITORY);
-    }
-
-    private boolean isBuildOnTravis() {
-        return "TRUE".equals(System.getProperty("ON_TRAVIS", "FALSE"));
     }
 
     @Test
