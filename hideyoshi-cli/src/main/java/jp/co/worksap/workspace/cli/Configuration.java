@@ -50,5 +50,5 @@ class Configuration {
     private DataSourcesConfigurationContainer dsConfig;
     private JVMHeapSizeConfiguration jvmConfig;
     private Map<String, GitRepositoryConfiguration> repository;
-    private Map<String, GitHookConfiguration> gitHooks;
+    private Map<String, GitHookConfiguration> gitHook;
 }

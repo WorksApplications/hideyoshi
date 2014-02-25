@@ -81,7 +81,7 @@ final class Provisioner {
         if (repository == null || repository.isEmpty()) {
             log.info("no Git repository is specified");
         } else {
-            gitInitializer.initialize(repository, configuration.getGitHooks());
+            gitInitializer.initialize(repository, configuration.getGitHook());
         }
     }
 
