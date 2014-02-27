@@ -8,6 +8,7 @@ import jp.co.worksap.workspace.ide.eclipse.EclipsePluginInstaller;
 import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
 import jp.co.worksap.workspace.lombok.LombokInstaller;
 import jp.co.worksap.workspace.packagemanagement.PackageManagementFacade;
+import jp.co.worksap.workspace.repository.git.GitInitializer;
 import jp.co.worksap.workspace.wasinstall.WASInstaller;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -41,6 +42,6 @@ public class Main {
         new LogConfigurator().configureLogger(bean);
         Configuration configuration = new ConfigurationLoader().loadFrom(bean.getConfigurationFile());
 
-        return new Provisioner(new PackageManagementFacade(), new EclipseInstaller(), new EclipsePluginInstaller(), new LombokInstaller(), new DB2Installer(), new WASInstaller(), new WebSphereConfiguration()).execute(configuration);
+        return new Provisioner(new PackageManagementFacade(), new EclipseInstaller(), new EclipsePluginInstaller(), new LombokInstaller(), new DB2Installer(), new WASInstaller(), new WebSphereConfiguration(), new GitInitializer()).execute(configuration);
     }
 }

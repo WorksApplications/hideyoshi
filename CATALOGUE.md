@@ -94,7 +94,7 @@ We have 2 motivation to develop monkey, it provides ideal development environmen
     * user name (to ease writing JavaDoc)
     * install [lombok](http://projectlombok.org/)
 * setup IDE workspace
-    * checkout sources from remote Git/SVN repository
+    * checkout sources from remote Git/SVN repository ([#1](https://github.com/WorksApplications/hideyoshi/issues/1))
     * the project checked out will depend on the team the developer is working with.
     * create projects (Maven project)
 * setup IDE workspace preferences
@@ -115,7 +115,7 @@ We have 2 motivation to develop monkey, it provides ideal development environmen
 * help user to start development
     * create shortcuts at task bar, desktop and so on.
     * create bookmarks at task bar, desktop and major browsers.
-    * create ssh config, git config and git hooks
+    * create ssh config, git config and git hooks ([#1](https://github.com/WorksApplications/hideyoshi/issues/1))
     * list up TODO to start development
     * mount NAS to PC with is protected by password authentication
     * install plugin to browser

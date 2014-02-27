@@ -26,12 +26,20 @@
       <artifactId>guava</artifactId>
     </dependency>
     <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
     </dependency> 
     <dependency>
       <groupId>net.lingala.zip4j</groupId>
       <artifactId>zip4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -50,4 +58,17 @@
       <artifactId>slf4j-simple</artifactId>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <!--
+        This profile will be used when this project is built on Travis CI,
+        because Travis CI does not have SSH private key to clone repository via SSH.
+        See GitInitializerTest for detail.
+      -->
+      <id>on-travis</id>
+      <properties>
+        <excludedGroups>jp.co.worksap.workspace.common.UseSsh</excludedGroups>
+      </properties>
+    </profile>
+  </profiles>
 </project>
