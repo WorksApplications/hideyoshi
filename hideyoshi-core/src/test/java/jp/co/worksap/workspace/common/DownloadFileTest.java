@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import jp.co.worksap.workspace.common.download.Downloader;
+
 import org.junit.Test;
 
 import com.google.common.hash.Hashing;
@@ -26,8 +28,8 @@ public class DownloadFileTest {
     @Test
     public void downloadFileLocal() throws IOException {
         File downloadedFile = File.createTempFile("eclipse", ".download");
-        DownloadFile downloadFile = new DownloadFile();
         URL url = new URL(relativeToAbsolutePath("./src/test/resources/.gitignore"));
+        Downloader downloadFile = Downloader.createFor(url);
         downloadFile.download(url, downloadedFile);
         assertTrue(Files.equal(new File("src/test/resources", ".gitignore"), downloadedFile));
     }
@@ -35,8 +37,8 @@ public class DownloadFileTest {
     @Test
     public void downloadFileHTTP() throws IOException {
         File downloadedFile = File.createTempFile("logo", ".download");
-        DownloadFile downloadFile = new DownloadFile();
         URL url = new URL("http://career.worksap.co.jp/common/img/logo.gif");
+        Downloader downloadFile = Downloader.createFor(url);
         downloadFile.download(url, downloadedFile);
 
         assertThat(downloadedFile.exists(), is(true));
