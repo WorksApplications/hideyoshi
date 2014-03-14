@@ -1,4 +1,6 @@
 language: java
+git:
+  submodules: false
 jdk:
   - openjdk7
   - oraclejdk7
