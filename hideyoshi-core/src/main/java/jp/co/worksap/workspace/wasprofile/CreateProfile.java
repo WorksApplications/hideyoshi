@@ -1,21 +1,7 @@
 package jp.co.worksap.workspace.wasprofile;
 
-import java.io.File;
-import java.io.IOException;
-
-import jp.co.worksap.workspace.common.PipingDaemon;
-
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Getter
 public class CreateProfile {
     private String installPath;
