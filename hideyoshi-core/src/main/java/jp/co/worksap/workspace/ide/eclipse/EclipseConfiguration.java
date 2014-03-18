@@ -18,6 +18,7 @@ import lombok.Setter;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
 
 
 @Data
@@ -31,6 +32,7 @@ public class EclipseConfiguration {
     private List<String> pluginRepository;
     @JsonDeserialize(keyUsing = OperatingSystemKeyDeserializer.class)
     private Map<OperatingSystem, String> downloadFrom;
+    private FindBugsPluginConfiguration findbugs;
 
     @Nonnull
     public Charset getDefaultCharset() {
@@ -66,5 +68,10 @@ public class EclipseConfiguration {
         } else {
             return Collections.unmodifiableMap(downloadFrom);
         }
+    }
+
+    @Nonnull
+    public Optional<FindBugsPluginConfiguration> getFindbugs() {
+        return Optional.fromNullable(findbugs);
     }
 }
