@@ -35,6 +35,7 @@ public class EclipseInstaller {
         }
     }
 
+    // FIXME OSX and Linux uses tar.gz format
     private void unpack(File downloadedFile, File targetDir) {
         try {
             ZipFile zipped = new ZipFile(downloadedFile);
