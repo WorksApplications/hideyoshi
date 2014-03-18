@@ -82,7 +82,7 @@ public class WASInstaller {
             OperatingSystem os = OperatingSystem.create();
             String setupPath = location.getAbsolutePath() + "/" + product + "/" + os.appendExtensionTo("install");
             File rspFile = File.createTempFile(product, ".rsp");
-            Resources.copy(WASInstaller.class.getResource(product + ".rsp"), Files.newOutputStreamSupplier(rspFile).getOutput());
+            Resources.copy(WASInstaller.class.getResource(product + ".rsp"), Files.asByteSink(rspFile).openStream());
 
             FileWriter rspFileWriter = new FileWriter(rspFile, true);
             rspFileWriter.write("\n-OPT installLocation=\"" + configuration.getInstallLocation() + "\\");

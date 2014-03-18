@@ -21,7 +21,7 @@ public class EclipseInstaller {
         try {
             String downloadUrl = findDownloadUrl(configuration);
             File downloadedFile = File.createTempFile("eclipse", ".download");
-            Resources.copy(URI.create(downloadUrl).toURL(), Files.newOutputStreamSupplier(downloadedFile).getOutput());
+            Resources.copy(URI.create(downloadUrl).toURL(), Files.asByteSink(downloadedFile).openStream());
             File eclipseDir = new File(location, "eclipse");
             if (eclipseDir.exists()) {
                 log.info("Eclipse folder already exists at {} so skip installation", eclipseDir.getAbsolutePath());

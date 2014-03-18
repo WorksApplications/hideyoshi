@@ -76,7 +76,7 @@ public class DB2Installer {
             // TODO OS Dependent
             String setupPath = location.getAbsolutePath() + "/WSER/image/setup.exe";
             File rspFile = File.createTempFile("db2Config", ".rsp");
-            Resources.copy(DB2Installer.class.getResource("db2.rsp"), Files.newOutputStreamSupplier(rspFile).getOutput());
+            Resources.copy(DB2Installer.class.getResource("db2.rsp"), Files.asByteSink(rspFile).openStream());
 
             FileWriter rspFileWriter = new FileWriter(rspFile, true);
             rspFileWriter.write("\nDB2.USERNAME=" + configuration.getUsername());
