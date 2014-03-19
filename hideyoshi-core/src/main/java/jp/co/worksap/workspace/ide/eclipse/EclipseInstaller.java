@@ -7,9 +7,8 @@ import java.net.URI;
 import javax.annotation.Nonnull;
 
 import jp.co.worksap.workspace.common.OperatingSystem;
+import jp.co.worksap.workspace.common.UnArchiver;
 import lombok.extern.slf4j.Slf4j;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Files;
@@ -20,26 +19,17 @@ public class EclipseInstaller {
     public File install(EclipseConfiguration configuration, File location) {
         try {
             String downloadUrl = findDownloadUrl(configuration);
-            File downloadedFile = File.createTempFile("eclipse", ".download");
+            File downloadedFile = File.createTempFile("eclipse", "." + Files.getFileExtension(downloadUrl));
             Resources.copy(URI.create(downloadUrl).toURL(), Files.asByteSink(downloadedFile).openStream());
             File eclipseDir = new File(location, "eclipse");
             if (eclipseDir.exists()) {
                 log.info("Eclipse folder already exists at {} so skip installation", eclipseDir.getAbsolutePath());
             } else {
-                unpack(downloadedFile, location);
+                new UnArchiver().extract(downloadedFile, eclipseDir);
                 log.info("Eclipse has been unzipped at {}", eclipseDir.getAbsolutePath());
             }
-            return new File(location, "eclipse");
+            return eclipseDir;
         } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private void unpack(File downloadedFile, File targetDir) {
-        try {
-            ZipFile zipped = new ZipFile(downloadedFile);
-            zipped.extractAll(targetDir.getAbsolutePath());
-        } catch (ZipException e) {
             throw new IllegalStateException(e);
         }
     }

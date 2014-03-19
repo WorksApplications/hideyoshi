@@ -14,10 +14,8 @@ import java.util.regex.Pattern;
 
 import jp.co.worksap.workspace.common.DownloadFile;
 import jp.co.worksap.workspace.common.OperatingSystem;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
 
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,13 +34,16 @@ public class EclipsePluginInstallerTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Before
-    public void makeZipFile() throws ZipException, IOException {
-        ZipFile zipFile = new ZipFile(new File(ZIP_FILE_PATH));
-        zipFile.getFile().delete();
+    public void makeZipFile() throws IOException {
+        ZipArchiver archiver = new ZipArchiver();
+        archiver.setDestFile(new File(ZIP_FILE_PATH));
+        archiver.getDestFile().delete();
+
         File iniFile = folder.newFile("eclipse.ini");
         File exeFile = folder.newFile("eclipse.exe");
-        zipFile.addFile(iniFile, new ZipParameters());
-        zipFile.addFile(exeFile, new ZipParameters());
+        archiver.addFile(iniFile, "eclipse.ini");
+        archiver.addFile(exeFile, "eclipse.exe");
+        archiver.createArchive();
     }
 
     @Before
