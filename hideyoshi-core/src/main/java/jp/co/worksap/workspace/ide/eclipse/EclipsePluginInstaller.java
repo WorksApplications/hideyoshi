@@ -24,7 +24,7 @@ public class EclipsePluginInstaller {
         }
 
         File workspace = new File(".");
-        new FindBugsPluginConfigurator().configure(configuration.getFindbugs(), workspace);
+        new EclipseWorkspaceInitializer().initialize(configuration, workspace);
     }
 
     private void installPlugin(@Nonnull List<EclipsePlugin> plugins, @Nonnull List<String> pluginRepository, File eclipseDir) throws IOException, InterruptedException {
