@@ -19,12 +19,12 @@ public class EclipseInstaller {
     public File install(EclipseConfiguration configuration, File location) {
         try {
             String downloadUrl = findDownloadUrl(configuration);
-            File downloadedFile = File.createTempFile("eclipse", "." + Files.getFileExtension(downloadUrl));
-            Resources.copy(URI.create(downloadUrl).toURL(), Files.asByteSink(downloadedFile).openStream());
             File eclipseDir = new File(location, "eclipse");
             if (eclipseDir.exists()) {
                 log.info("Eclipse folder already exists at {} so skip installation", eclipseDir.getAbsolutePath());
             } else {
+                File downloadedFile = File.createTempFile("eclipse", "." + Files.getFileExtension(downloadUrl));
+                Resources.copy(URI.create(downloadUrl).toURL(), Files.asByteSink(downloadedFile).openStream());
                 new UnArchiver().extract(downloadedFile, location);
                 log.info("Eclipse has been unzipped at {}", eclipseDir.getAbsolutePath());
             }
