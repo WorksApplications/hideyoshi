@@ -45,7 +45,10 @@ public class EclipseInstallerTest {
         File exeFile = new File(eclipseDir, "eclipse.exe");
         Files.touch(iniFile);
         Files.touch(exeFile);
+
         archiver.addDirectory(eclipseDir);
+        archiver.addFile(iniFile, "eclipse/eclipse.ini");
+        archiver.addFile(exeFile, "eclipse/eclipse.exe");
         archiver.createArchive();
     }
 

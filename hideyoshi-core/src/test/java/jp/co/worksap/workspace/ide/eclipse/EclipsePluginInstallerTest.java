@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import jp.co.worksap.workspace.common.DownloadFile;
 import jp.co.worksap.workspace.common.OperatingSystem;
 
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,24 +26,10 @@ import com.google.common.io.PatternFilenameFilter;
 
 public class EclipsePluginInstallerTest {
     private static final String INSTALLER_NAME = "eclipse-jee-kepler-SR1-win32-x86_64.zip";
-    private static final String ZIP_FILE_PATH = "./target/empty.zip";
     private static final Pattern CDT_DIR_NAME = Pattern.compile("^org\\.eclipse\\.cdt_.*");
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-
-    @Before
-    public void makeZipFile() throws IOException {
-        ZipArchiver archiver = new ZipArchiver();
-        archiver.setDestFile(new File(ZIP_FILE_PATH));
-        archiver.getDestFile().delete();
-
-        File iniFile = folder.newFile("eclipse.ini");
-        File exeFile = folder.newFile("eclipse.exe");
-        archiver.addFile(iniFile, "eclipse.ini");
-        archiver.addFile(exeFile, "eclipse.exe");
-        archiver.createArchive();
-    }
 
     @Before
     public void ensureWindows64bit() {

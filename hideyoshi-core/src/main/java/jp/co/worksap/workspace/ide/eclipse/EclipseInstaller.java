@@ -25,7 +25,7 @@ public class EclipseInstaller {
             if (eclipseDir.exists()) {
                 log.info("Eclipse folder already exists at {} so skip installation", eclipseDir.getAbsolutePath());
             } else {
-                new UnArchiver().extract(downloadedFile, eclipseDir);
+                new UnArchiver().extract(downloadedFile, location);
                 log.info("Eclipse has been unzipped at {}", eclipseDir.getAbsolutePath());
             }
             return eclipseDir;
