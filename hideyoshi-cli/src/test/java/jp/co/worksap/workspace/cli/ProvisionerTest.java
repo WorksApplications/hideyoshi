@@ -79,7 +79,7 @@ public class ProvisionerTest {
 
     @Test
     public void callEclipseInstallWhenEclipseConfigIsNonnull() throws IOException {
-        configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", null, null, null));
+        configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", null, null, null, null));
         assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(eclipseInstaller, only()).install(any(EclipseConfiguration.class), any(File.class));
     }
@@ -94,7 +94,7 @@ public class ProvisionerTest {
     @Test
     public void callEclipsePluginInstallWhenEclipseConfigIsNonnull() throws IOException {
         List<EclipsePlugin> pluginList = Lists.newArrayList(EclipsePlugin.of("egit"));
-        configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", pluginList, null, null));
+        configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", pluginList, null, null, null));
         assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(eclipsePluginInstaller, only()).install(any(EclipseConfiguration.class), any(File.class));
     }
@@ -109,7 +109,7 @@ public class ProvisionerTest {
     @Test
     public void callLombokInstallWhenEclipseConfigAndLombokConfigAreNonnull() throws IOException {
         List<EclipsePlugin> pluginList = Lists.newArrayList(EclipsePlugin.of("egit"));
-        configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", pluginList, null, null));
+        configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", pluginList, null, null, null));
         configuration.setLombok(LombokConfiguration.fromString("1.12.2"));
         assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasConfigure, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(lombokInstaller, only()).install(Matchers.<Optional<LombokConfiguration>> any(), any(File.class));

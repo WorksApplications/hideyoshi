@@ -22,6 +22,9 @@ public class EclipsePluginInstaller {
         } catch (IOException | InterruptedException e) {
             throw new IllegalStateException(e);
         }
+
+        File workspace = new File(".");
+        new EclipseWorkspaceInitializer().initialize(configuration, workspace);
     }
 
     private void installPlugin(@Nonnull List<EclipsePlugin> plugins, @Nonnull List<String> pluginRepository, File eclipseDir) throws IOException, InterruptedException {

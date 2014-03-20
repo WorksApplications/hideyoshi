@@ -6,27 +6,37 @@ import java.net.URI;
 
 import javax.annotation.Nonnull;
 
+import jp.co.worksap.workspace.common.DownloadFile;
 import jp.co.worksap.workspace.common.OperatingSystem;
 import jp.co.worksap.workspace.common.UnArchiver;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Files;
-import com.google.common.io.Resources;
 
 @Slf4j
 public class EclipseInstaller {
     public File install(EclipseConfiguration configuration, File location) {
         try {
             String downloadUrl = findDownloadUrl(configuration);
-            File downloadedFile = File.createTempFile("eclipse", "." + Files.getFileExtension(downloadUrl));
-            Resources.copy(URI.create(downloadUrl).toURL(), Files.asByteSink(downloadedFile).openStream());
             File eclipseDir = new File(location, "eclipse");
             if (eclipseDir.exists()) {
                 log.info("Eclipse folder already exists at {} so skip installation", eclipseDir.getAbsolutePath());
             } else {
-                new UnArchiver().extract(downloadedFile, eclipseDir);
-                log.info("Eclipse has been unzipped at {}", eclipseDir.getAbsolutePath());
+                final File downloadedFile;
+                URI downloadUri = URI.create(downloadUrl);
+                if ("file".equals(downloadUri.getScheme())) {
+                    // No need to copy: just extract existing file
+                    downloadedFile = new File(downloadUri.getPath());
+                } else {
+                    downloadedFile = File.createTempFile("eclipse", "." + Files.getFileExtension(downloadUrl));
+                    log.info("downloading Eclipse from {}...", downloadUrl);
+                    new DownloadFile().download(downloadUri.toURL(), downloadedFile);
+                    log.info("Eclipse has been downloaded.");
+                }
+                log.info("extracting Eclipse...");
+                new UnArchiver().extract(downloadedFile, location);
+                log.info("Eclipse has been extracted at {}", eclipseDir.getAbsolutePath());
             }
             return eclipseDir;
         } catch (IOException e) {

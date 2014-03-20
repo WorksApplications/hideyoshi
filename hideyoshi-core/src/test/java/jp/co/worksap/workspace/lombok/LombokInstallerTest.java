@@ -60,7 +60,10 @@ public class LombokInstallerTest {
         File exeFile = new File(eclipseDir, "eclipse.exe");
         Files.touch(iniFile);
         Files.touch(exeFile);
+
         archiver.addDirectory(eclipseDir);
+        archiver.addFile(iniFile, "eclipse/eclipse.ini");
+        archiver.addFile(exeFile, "eclipse/eclipse.exe");
         archiver.createArchive();
     }
 
@@ -99,7 +102,7 @@ public class LombokInstallerTest {
         Version juno = Version.fromString("juno");
         downloadFrom.put(OperatingSystem.create(), ZIP_FILE_PATH);
 
-        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom);
+        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null);
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
