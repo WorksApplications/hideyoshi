@@ -1,7 +1,6 @@
 package jp.co.worksap.workspace.wasprofile;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,5 +23,5 @@ public class WebSphereProfileConfiguration {
     private JVMHeapSizeConfiguration jvmHeapSize;
     private SharedLibraryConfiguration sharedLibrary;
     private List<DataSourceConfiguration> dataSource;
-    private Map<String, List<GlobalSecurityConfiguration>> globalSecurity;
+    private List<GlobalSecurityConfiguration> globalSecurity;
 }

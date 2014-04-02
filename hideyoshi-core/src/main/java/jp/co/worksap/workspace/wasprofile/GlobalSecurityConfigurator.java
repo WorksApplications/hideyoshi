@@ -1,18 +1,17 @@
 package jp.co.worksap.workspace.wasprofile;
 
 import java.util.List;
-import java.util.Map;
 
 public class GlobalSecurityConfigurator {
     public String returnScript(WebSphereProfileConfiguration wasConfig){
-        Map<String,List<GlobalSecurityConfiguration>> config = wasConfig.getGlobalSecurity();
+        List<GlobalSecurityConfiguration> config = wasConfig.getGlobalSecurity();
         if (config == null) {
             return "";
         }
 
         StringBuilder script = new StringBuilder();
 
-        for (GlobalSecurityConfiguration g : config.get("data")) {
+        for (GlobalSecurityConfiguration g : config) {
             String cell = wasConfig.getCellName();
             String alias = g.getAlias();
             String userid = g.getUserid();
