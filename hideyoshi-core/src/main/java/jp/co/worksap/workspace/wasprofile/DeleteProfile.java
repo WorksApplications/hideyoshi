@@ -5,7 +5,7 @@ public class DeleteProfile {
     private String installPath;
     private String serverName;
     
-    public void readConfig(CreateProfileConfiguration config, WebSphereConfiguration wasConfig){
+    public void readConfig(ProfileConfiguration config, WebSphereConfiguration wasConfig){
         profileName = config.getProfileName();
         serverName = wasConfig.getServerName();
         installPath = config.getInstallPath();

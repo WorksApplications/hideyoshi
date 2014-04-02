@@ -19,15 +19,14 @@ import com.google.common.io.Files;
 public class WebSphereConfiguration {
     private String cellName;
     private String nodeName;
-    private String serverName; 
-    private String profilePath; 
-    private String installPath;
+    private String serverName;
     private String platform;
+    private ProfileConfiguration profile;
     private JVMHeapSizeConfiguration jvmHeapSize;
     private SharedLibraryConfiguration sharedLibrary;
     private Map<String, List<GlobalSecurityConfiguration>> globalSecurity;
 
-    public int createAndConfigureProfile(CreateProfileConfiguration profile, JDBCProviderConfiguration jdbc, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
+    public int createAndConfigureProfile(JDBCProviderConfiguration jdbc, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
         int exitVal=0;
         String tmp="";
         
@@ -44,8 +43,8 @@ public class WebSphereConfiguration {
         
         CreateProfile obj1 = new CreateProfile();
         obj1.readConfig(this, profile);
-        installPath = obj1.getInstallPath();
-        profilePath = installPath+"\\WebSphere\\AppServer\\profiles\\"+obj1.getProfileName()+"\\bin";
+        String installPath = profile.getInstallPath();
+        String profilePath = installPath+"\\WebSphere\\AppServer\\profiles\\"+profile.getProfileName()+"\\bin";
         tmp+="print 'Starting Configuration of WAS profile.....'\n";
         SharedLibraryConfigurator obj2 = new SharedLibraryConfigurator();
         obj2.readConfig(this);

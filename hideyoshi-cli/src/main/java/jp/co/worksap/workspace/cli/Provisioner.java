@@ -20,7 +20,7 @@ import jp.co.worksap.workspace.repository.git.GitRepositoryConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstallConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstaller;
 import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
-import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
+import jp.co.worksap.workspace.wasprofile.ProfileConfiguration;
 import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
 import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
 import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
@@ -116,12 +116,11 @@ final class Provisioner {
     }
     
     public void configureWebsphere(Configuration configuration) throws IOException{
-        CreateProfileConfiguration wasProfile = configuration.getWasProfileConfig();
         JDBCProviderConfiguration jdbcConfig = configuration.getJdbcProviderConfig();
         CommonDSConfiguration commonDSConfig = configuration.getDataSourcesCommonConfig();
         DataSourcesConfigurationContainer dsConfig = configuration.getDataSourcesConfig();
-        if (wasProfile!=null && jdbcConfig!=null && dsConfig!=null) {
-            wasConfigure.createAndConfigureProfile(wasProfile, jdbcConfig, commonDSConfig, dsConfig);
+        if (jdbcConfig!=null && dsConfig!=null) {
+            wasConfigure.createAndConfigureProfile(jdbcConfig, commonDSConfig, dsConfig);
         } else {
             log.info("no WebSphere Configuration is required");
         } 
