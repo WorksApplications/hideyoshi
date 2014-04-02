@@ -11,9 +11,7 @@ import jp.co.worksap.workspace.packagemanagement.Package;
 import jp.co.worksap.workspace.repository.git.GitHookConfiguration;
 import jp.co.worksap.workspace.repository.git.GitRepositoryConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstallConfiguration;
-import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
 import jp.co.worksap.workspace.wasprofile.ProfileConfiguration;
-import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
 import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
 import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
 import lombok.AllArgsConstructor;
@@ -32,14 +30,10 @@ class Configuration {
     private ProfileConfiguration wasProfileConfig;
     private SharedLibraryConfiguration sharedLibraryConfig;
     private JDBCProviderConfiguration jdbcProviderConfig;
-    private CommonDSConfiguration dataSourcesCommonConfig;
-    private DataSourcesConfigurationContainer dataSourcesConfig;
     private WASInstallConfiguration wasInstall;
     private ProfileConfiguration wasProfile;
     private SharedLibraryConfiguration slConfig;
     private JDBCProviderConfiguration jdbcConfig;
-    private CommonDSConfiguration commonDSConfig;
-    private DataSourcesConfigurationContainer dsConfig;
     private Map<String, GitRepositoryConfiguration> repository;
     private Map<String, GitHookConfiguration> gitHook;
 }

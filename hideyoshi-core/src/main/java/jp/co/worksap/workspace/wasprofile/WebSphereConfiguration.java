@@ -25,9 +25,10 @@ public class WebSphereConfiguration {
     private ProfileConfiguration profile;
     private JVMHeapSizeConfiguration jvmHeapSize;
     private SharedLibraryConfiguration sharedLibrary;
+    private List<DataSourceConfiguration> dataSource;
     private Map<String, List<GlobalSecurityConfiguration>> globalSecurity;
 
-    public int createAndConfigureProfile(CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
+    public int createAndConfigureProfile() throws IOException{
         int exitVal=0;
         String tmp="";
         
@@ -65,7 +66,7 @@ public class WebSphereConfiguration {
         
         DataSources obj5 = new DataSources();  
         tmp+="print 'Step 4 of 5: Configuring Data Sources .....'\n";
-        tmp+=obj5.returnScript(this, commonDSConfig, ds);
+        tmp+=obj5.returnScript(this);
         
         tmp+="print 'Step 5 of 5: Configuring JVM heap Size .....'\n";
         tmp+=jvmHeapSize.returnScript(this.getServerName(), this.getNodeName()); 
