@@ -21,12 +21,13 @@ public class WebSphereConfiguration {
     private String nodeName;
     private String serverName;
     private String platform;
+    private JDBCProviderConfiguration jdbcProvider;
     private ProfileConfiguration profile;
     private JVMHeapSizeConfiguration jvmHeapSize;
     private SharedLibraryConfiguration sharedLibrary;
     private Map<String, List<GlobalSecurityConfiguration>> globalSecurity;
 
-    public int createAndConfigureProfile(JDBCProviderConfiguration jdbc, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
+    public int createAndConfigureProfile(CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
         int exitVal=0;
         String tmp="";
         
@@ -51,8 +52,8 @@ public class WebSphereConfiguration {
         tmp+="print 'Step 1 of 5: Configuring Shared Library.....'\n";
         tmp+=obj2.returnScript();
         
-        JDBCProvider obj3 = new JDBCProvider();
-        obj3.readConfig(jdbc);
+        JDBCProviderConfigurator obj3 = new JDBCProviderConfigurator();
+        obj3.readConfig(jdbcProvider);
         tmp+="AdminConfig.save()\n";
         tmp+="print 'Step 2 of 5: Configuring JDBC Provider.....'\n";
         tmp+=obj3.returnScript();

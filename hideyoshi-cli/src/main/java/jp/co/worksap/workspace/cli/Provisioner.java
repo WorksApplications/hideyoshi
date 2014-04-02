@@ -116,11 +116,10 @@ final class Provisioner {
     }
     
     public void configureWebsphere(Configuration configuration) throws IOException{
-        JDBCProviderConfiguration jdbcConfig = configuration.getJdbcProviderConfig();
         CommonDSConfiguration commonDSConfig = configuration.getDataSourcesCommonConfig();
         DataSourcesConfigurationContainer dsConfig = configuration.getDataSourcesConfig();
-        if (jdbcConfig!=null && dsConfig!=null) {
-            wasConfigure.createAndConfigureProfile(jdbcConfig, commonDSConfig, dsConfig);
+        if (dsConfig!=null) {
+            wasConfigure.createAndConfigureProfile(commonDSConfig, dsConfig);
         } else {
             log.info("no WebSphere Configuration is required");
         } 
