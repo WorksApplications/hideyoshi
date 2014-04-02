@@ -47,4 +47,15 @@ public class ConfigurationLoaderTest {
 
         assertThat(config.getTargetPackages(), contains(Package.of("wget")));
     }
+
+    @Test
+    public void testWebSphereProfile() throws IOException {
+        File file = folder.newFile();
+        Files.write("wasProfile: {cellName: \"cell-name\", dataSource: [{databaseName: database-name}]}", file, Charsets.UTF_8);
+        Configuration config = new ConfigurationLoader().loadFrom(file);
+
+        assertThat(config.getWasProfile().getCellName(), is("cell-name"));
+        assertThat(config.getWasProfile().getDataSource().size(), is(1));
+        assertThat(config.getWasProfile().getDataSource().get(0).getDatabaseName(), is("database-name"));
+    }
 }

@@ -5,11 +5,11 @@ import java.io.IOException;
 import jp.co.worksap.workspace.database.db2.DB2Installer;
 import jp.co.worksap.workspace.ide.eclipse.EclipseInstaller;
 import jp.co.worksap.workspace.ide.eclipse.EclipsePluginInstaller;
-import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
 import jp.co.worksap.workspace.lombok.LombokInstaller;
 import jp.co.worksap.workspace.packagemanagement.PackageManagementFacade;
 import jp.co.worksap.workspace.repository.git.GitInitializer;
 import jp.co.worksap.workspace.wasinstall.WASInstaller;
+import jp.co.worksap.workspace.wasprofile.WebSphereProfileCreator;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -42,6 +42,6 @@ public class Main {
         new LogConfigurator().configureLogger(bean);
         Configuration configuration = new ConfigurationLoader().loadFrom(bean.getConfigurationFile());
 
-        return new Provisioner(new PackageManagementFacade(), new EclipseInstaller(), new EclipsePluginInstaller(), new LombokInstaller(), new DB2Installer(), new WASInstaller(), new WebSphereConfiguration(), new GitInitializer()).execute(configuration);
+        return new Provisioner(new PackageManagementFacade(), new EclipseInstaller(), new EclipsePluginInstaller(), new LombokInstaller(), new DB2Installer(), new WASInstaller(), new WebSphereProfileCreator(), new GitInitializer()).execute(configuration);
     }
 }

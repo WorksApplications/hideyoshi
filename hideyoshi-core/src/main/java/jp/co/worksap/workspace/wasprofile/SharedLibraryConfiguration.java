@@ -1,9 +1,16 @@
 package jp.co.worksap.workspace.wasprofile;
 
-import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
-public class SharedLibraryConfiguration {    
+@Data
+@Setter(AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
+public class SharedLibraryConfiguration {
     private String libName;
     private String libClassPath;
     private String clMode;

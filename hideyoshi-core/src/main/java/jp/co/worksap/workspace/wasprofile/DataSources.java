@@ -1,179 +1,64 @@
 package jp.co.worksap.workspace.wasprofile;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class DataSources {      
-    private String name;
-    private String jndiName;
-    private String databaseName;
-    private String driverType;
-    private String serverName;
-    private String portNumber;
-    private String dataStoreHelperClassName;
-    private String componentManagedAuthenticationAlias;
-    private String xaRecoveryAuthAlias;
-/*
-    public void readConfigAndCreateScript(@Nonnull File configFile) throws JsonParseException, JsonMappingException, IOException{
-        ObjectMapper mapper = new ObjectMapper();
-        DataSourcesConfigurationContainer ds = mapper.readValue(configFile,DataSourcesConfigurationContainer.class);
-        ArrayList<DataSourcesConfiguration> dataSources = ds.get("dataSources");
-        String tmp="";
-        for (DataSourcesConfiguration d : dataSources) {
-            profilePath = d.getProfilePath();           
-            name = d.getName();
-            jndiName = d.getJndiName();
-            databaseName = d.getDatabaseName();
-            driverType = d.getDriverType();
-            serverName = d.getServerName();
-            portNumber = d.getPortNumber();
-            dataStoreHelperClassName = d.getDataStoreHelperClassName();
-            componentManagedAuthenticationAlias = d.getComponentManagedAuthenticationAlias();
-            xaRecoveryAuthAlias = d.getXaRecoveryAuthAlias();  
-            tmp+="nodeList = AdminTask.listJDBCProviders().split('\\r\\n')\n";
-            tmp+="jdbcProvider = nodeList[len(nodeList)-1]\n";
-            tmp+="AdminTask.createDatasource(jdbcProvider , ['-name', '"+name+"', '-jndiName', '"+jndiName+"', '-configureResourceProperties', '[[databaseName java.lang.String "+databaseName+"] [driverType java.lang.Integer "+driverType+"] [serverName java.lang.String  "+serverName+"] [portNumber java.lang.Integer "+portNumber+"]]', '-dataStoreHelperClassName', '"+dataStoreHelperClassName+"', '-componentManagedAuthenticationAlias', '"+componentManagedAuthenticationAlias+"', '-xaRecoveryAuthAlias', '"+xaRecoveryAuthAlias+"'])\n";
+public class DataSources {
+    public String returnScript(WebSphereProfileConfiguration wasConfig) {
+        List<DataSourceConfiguration> dataSourceList = wasConfig.getDataSource();
+        if (dataSourceList == null) {
+            return "";
         }
 
-        tmp+="AdminConfig.save()\n";  
-        tmp+="print 'Successfully configured data sources.'\n";
-        Files.write(tmp, new File(profilePath, "datasources.py"), Charsets.UTF_8);      
+        StringBuilder script = new StringBuilder();
+        for (DataSourceConfiguration dataSource : dataSourceList) {
+            String name = dataSource.getName();
+            String jndiName = dataSource.getJndiName();
+            String databaseName = dataSource.getDatabaseName();
+            String driverType = dataSource.getDriverType();
+            String serverName = wasConfig.getServerName();
+            String portNumber = dataSource.getPortNumber();
+            String dataStoreHelperClassName = dataSource.getDataStoreHelperClassName();
+            String componentManagedAuthenticationAlias = dataSource.getComponentManagedAuthenticationAlias();
+            String xaRecoveryAuthAlias = dataSource.getXaRecoveryAuthAlias();  
 
-        tmp+="AdminConfig.save()\n";
-        Files.write(tmp, new File(profilePath, "datasources.py"), Charsets.UTF_8);
-
-    }
-
-    public void readConfig(DataSourcesConfigurationContainer ds) throws IOException {       
-        ArrayList<DataSourcesConfiguration> dataSources = ds.get("dataSources");
-        String tmp="";
-        for (DataSourcesConfiguration d : dataSources) {
-            profilePath = d.getProfilePath();           
-            name = d.getName();
-            jndiName = d.getJndiName();
-            databaseName = d.getDatabaseName();
-            driverType = d.getDriverType();
-            serverName = d.getServerName();
-            portNumber = d.getPortNumber();
-            dataStoreHelperClassName = d.getDataStoreHelperClassName();
-            componentManagedAuthenticationAlias = d.getComponentManagedAuthenticationAlias();
-            xaRecoveryAuthAlias = d.getXaRecoveryAuthAlias();  
-            tmp+="nodeList = AdminTask.listJDBCProviders().split('\\r\\n')\n";
-            tmp+="jdbcProvider = nodeList[len(nodeList)-1]\n";
-            tmp+="AdminTask.createDatasource(jdbcProvider , ['-name', '"+name+"', '-jndiName', '"+jndiName+"', '-configureResourceProperties', '[[databaseName java.lang.String "+databaseName+"] [driverType java.lang.Integer "+driverType+"] [serverName java.lang.String  "+serverName+"] [portNumber java.lang.Integer "+portNumber+"]]', '-dataStoreHelperClassName', '"+dataStoreHelperClassName+"', '-componentManagedAuthenticationAlias', '"+componentManagedAuthenticationAlias+"', '-xaRecoveryAuthAlias', '"+xaRecoveryAuthAlias+"'])\n";
+            script.append("nodeList = AdminTask.listJDBCProviders().split('\\r\\n')\n");
+            script.append("jdbcProvider = nodeList[len(nodeList)-1]\n"); 
+            script.append("dsId = \"\"\n");
+            script.append("dsList = AdminConfig.getid(\"/DataSource:").append(name).append("\")\n");
+            script.append("if (len(dsList) > 0):\n");
+            script.append("  for item in dsList.split('\\n'):\n");
+            script.append("      item = item.rstrip()\n");
+            script.append("      jndiName = AdminConfig.showAttribute(item, \"jndiName\" )\n");
+            script.append("      if (\"").append(jndiName).append("\" == jndiName):\n");
+            script.append("          dsId = item\n");
+            script.append("if (dsId == \"\"):\n");
+            script.append("  AdminTask.createDatasource(jdbcProvider , ['-name', '").append(name)
+                    .append("', '-jndiName', '").append(jndiName)
+                    .append("', '-configureResourceProperties', '[[databaseName java.lang.String ").append(databaseName)
+                    .append("] [driverType java.lang.Integer ").append(driverType)
+                    .append("] [serverName java.lang.String  ").append(serverName)
+                    .append("] [portNumber java.lang.Integer ").append(portNumber)
+                    .append("]]', '-dataStoreHelperClassName', '").append(dataStoreHelperClassName)
+                    .append("', '-componentManagedAuthenticationAlias', '").append(componentManagedAuthenticationAlias)
+                    .append("', '-xaRecoveryAuthAlias', '").append(xaRecoveryAuthAlias)
+                    .append("'])\n");
+            script.append("else:\n");
+            script.append("  print \"").append(name).append(" already exists in this JDBC Provider!\"\n");
+            script.append("  print \"Removing existing data source and creating a new one\"\n");
+            script.append("  AdminConfig.remove(dsId)\n");
+            script.append("  AdminConfig.save()\n");
+            script.append("  AdminTask.createDatasource(jdbcProvider , ['-name', '").append(name)
+                    .append("', '-jndiName', '").append(jndiName)
+                    .append("', '-configureResourceProperties', '[[databaseName java.lang.String ").append(databaseName)
+                    .append("] [driverType java.lang.Integer ").append(driverType)
+                    .append("] [serverName java.lang.String  ").append(serverName)
+                    .append("] [portNumber java.lang.Integer ").append(portNumber)
+                    .append("]]', '-dataStoreHelperClassName', '").append(dataStoreHelperClassName)
+                    .append("', '-componentManagedAuthenticationAlias', '").append(componentManagedAuthenticationAlias)
+                    .append("', '-xaRecoveryAuthAlias', '").append(xaRecoveryAuthAlias)
+                    .append("'])\n");
         }
-
-        tmp+="AdminConfig.save()\n";  
-        tmp+="print 'Successfully configured data sources.'\n";
-        Files.write(tmp, new File(profilePath, "datasources.py"), Charsets.UTF_8);      
-
-        tmp+="AdminConfig.save()\n";
-        Files.write(tmp, new File(profilePath, "datasources.py"), Charsets.UTF_8);
-
+        script.append("print 'Successfully configured data sources.'\n");
+        return script.toString();
     }
-  
-    
-    public int executeScript() throws IOException{
-        int exitVal=-1;
-        String bat = "wsadmin.bat -lang jython -profile datasources.py\n";
-        File batchFile = new File("was_ds.cmd");
-        Files.write(bat, batchFile , Charsets.UTF_8); 
-        
-        ProcessBuilder builder = new ProcessBuilder(batchFile.getAbsolutePath());   
-        builder.directory(new File(profilePath));
-        log.info("execute command ({}) to configure data sources at {}", builder.command(), profilePath);
-        Process process = builder.start();
-        try {
-            recordStdoutOf(process);
-            recordStderrOf(process);
-            process.getOutputStream().close();
-            exitVal = process.waitFor();
-            if (exitVal != 0) {
-                throw new IllegalArgumentException("Failed to configure data sources, status code is " + exitVal);
-            }            
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        } finally {            
-            process.destroy();     
-        }   
-        return exitVal;
-    }
-
-   
-    public int configure(File config) throws IOException{
-        readConfigAndCreateScript(config);
-        int exitVal = executeScript();
-        return exitVal;
-    }  
-*/    
-    public String returnScript(CommonWASConfiguration commonConfig, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) {        
-        ArrayList<DataSourcesConfiguration> dataSources = ds.get("dataSources");
-        String tmp="";
-        for (DataSourcesConfiguration d : dataSources) {               
-            name = d.getName();
-            jndiName = d.getJndiName();
-            databaseName = commonDSConfig.getDatabaseName();
-            driverType = commonDSConfig.getDriverType();
-            serverName = commonConfig.getServerName();
-            portNumber = commonDSConfig.getPortNumber();
-            dataStoreHelperClassName = commonDSConfig.getDataStoreHelperClassName();
-            componentManagedAuthenticationAlias = d.getComponentManagedAuthenticationAlias();
-            xaRecoveryAuthAlias = d.getXaRecoveryAuthAlias();  
-            tmp+="nodeList = AdminTask.listJDBCProviders().split('\\r\\n')\n";
-            tmp+="jdbcProvider = nodeList[len(nodeList)-1]\n"; 
-            
-            tmp+="dsId = \"\"\n";
-            tmp+="dsList = AdminConfig.getid(\"/DataSource:" + name + "\")\n";
-            tmp+="if (len(dsList) > 0):\n";
-            tmp+="  for item in dsList.split('\\n'):\n";
-            tmp+="      item = item.rstrip()\n";
-            tmp+="      jndiName = AdminConfig.showAttribute(item, \"jndiName\" )\n";
-            tmp+="      if (\""+jndiName+"\" == jndiName):\n";
-            tmp+="          dsId = item\n";
-            tmp+="if (dsId == \"\"):\n";          
-            tmp+="  AdminTask.createDatasource(jdbcProvider , ['-name', '"+name+"', '-jndiName', '"+jndiName+"', '-configureResourceProperties', '[[databaseName java.lang.String "+databaseName+"] [driverType java.lang.Integer "+driverType+"] [serverName java.lang.String  "+serverName+"] [portNumber java.lang.Integer "+portNumber+"]]', '-dataStoreHelperClassName', '"+dataStoreHelperClassName+"', '-componentManagedAuthenticationAlias', '"+componentManagedAuthenticationAlias+"', '-xaRecoveryAuthAlias', '"+xaRecoveryAuthAlias+"'])\n";            
-            tmp+="else:\n";
-            tmp+="  print \""+name+" already exists in this JDBC Provider!\"\n";
-            tmp+="  print \"Removing existing data source and creating a new one\"\n";
-            tmp+="  AdminConfig.remove(dsId)\n";
-            tmp+="  AdminConfig.save()\n";            
-            tmp+="  AdminTask.createDatasource(jdbcProvider , ['-name', '"+name+"', '-jndiName', '"+jndiName+"', '-configureResourceProperties', '[[databaseName java.lang.String "+databaseName+"] [driverType java.lang.Integer "+driverType+"] [serverName java.lang.String  "+serverName+"] [portNumber java.lang.Integer "+portNumber+"]]', '-dataStoreHelperClassName', '"+dataStoreHelperClassName+"', '-componentManagedAuthenticationAlias', '"+componentManagedAuthenticationAlias+"', '-xaRecoveryAuthAlias', '"+xaRecoveryAuthAlias+"'])\n";            
-            
-        }
-        tmp+="print 'Successfully configured data sources.'\n";
-        return tmp;
-    }
- /*  
-    public String returnScript(File configFile) throws IOException{
-        ObjectMapper mapper = new ObjectMapper();
-        DataSourcesConfigurationContainer ds = mapper.readValue(configFile,DataSourcesConfigurationContainer.class);
-        ArrayList<DataSourcesConfiguration> dataSources = ds.get("dataSources");
-        String tmp="";
-        for (DataSourcesConfiguration d : dataSources) {                       
-            name = d.getName();
-            jndiName = d.getJndiName();
-            databaseName = d.getDatabaseName();
-            driverType = d.getDriverType();
-            serverName = d.getServerName();
-            portNumber = d.getPortNumber();
-            dataStoreHelperClassName = d.getDataStoreHelperClassName();
-            componentManagedAuthenticationAlias = d.getComponentManagedAuthenticationAlias();
-            xaRecoveryAuthAlias = d.getXaRecoveryAuthAlias();  
-            tmp+="nodeList = AdminTask.listJDBCProviders().split('\\r\\n')\n";
-            tmp+="jdbcProvider = nodeList[len(nodeList)-1]\n";            
-            tmp+="AdminTask.createDatasource(jdbcProvider , ['-name', '"+name+"', '-jndiName', '"+jndiName+"', '-configureResourceProperties', '[[databaseName java.lang.String "+databaseName+"] [driverType java.lang.Integer "+driverType+"] [serverName java.lang.String  "+serverName+"] [portNumber java.lang.Integer "+portNumber+"]]', '-dataStoreHelperClassName', '"+dataStoreHelperClassName+"', '-componentManagedAuthenticationAlias', '"+componentManagedAuthenticationAlias+"', '-xaRecoveryAuthAlias', '"+xaRecoveryAuthAlias+"'])\n";            
-        }
-        tmp+="print 'Successfully configured data sources.'\n";
-        return tmp;
-    }
-    
-    private void recordStdoutOf(final Process process) throws IOException {
-        Thread daemon = PipingDaemon.createThread(process.getInputStream(), "Configure Data Sources", "");
-        daemon.start();
-    }
-
-    private void recordStderrOf(final Process process) throws IOException {
-        Thread daemon = PipingDaemon.createThread(process.getErrorStream(), "Configure Data Sources", "");
-        daemon.start();
-    }
-    */
 }

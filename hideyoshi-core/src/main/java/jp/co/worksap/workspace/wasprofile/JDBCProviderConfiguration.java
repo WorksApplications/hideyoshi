@@ -1,8 +1,15 @@
 package jp.co.worksap.workspace.wasprofile;
 
-import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
+@Data
+@Setter(AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class JDBCProviderConfiguration {   
     private String scope;
     private String databaseType;
