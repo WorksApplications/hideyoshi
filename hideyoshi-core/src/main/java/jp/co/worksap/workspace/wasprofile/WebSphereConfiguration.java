@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import jp.co.worksap.workspace.common.PipingDaemon;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.base.Charsets;
@@ -12,13 +13,17 @@ import com.google.common.io.Files;
 // TODO add setter to load data from configuration file
 // TODO move logic to other class
 @Slf4j
+@Getter
 public class WebSphereConfiguration {
+    private String cellName;
+    private String nodeName;
+    private String serverName; 
     private String profilePath; 
     private String installPath;
     private String platform;
     private JVMHeapSizeConfiguration jvmHeapSize;
 
-    public int createAndConfigureProfile(CommonWASConfiguration commonConfig, CreateProfileConfiguration profile, SharedLibraryConfiguration sl, JDBCProviderConfiguration jdbc, GlobalSecurityConfigurationContainer gs, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
+    public int createAndConfigureProfile(CreateProfileConfiguration profile, SharedLibraryConfiguration sl, JDBCProviderConfiguration jdbc, GlobalSecurityConfigurationContainer gs, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
         int exitVal=0;
         String tmp="";
         
@@ -34,12 +39,12 @@ public class WebSphereConfiguration {
         }
         
         CreateProfile obj1 = new CreateProfile();
-        obj1.readConfig(commonConfig, profile);
+        obj1.readConfig(this, profile);
         installPath = obj1.getInstallPath();
         profilePath = installPath+"\\WebSphere\\AppServer\\profiles\\"+obj1.getProfileName()+"\\bin";
         tmp+="print 'Starting Configuration of WAS profile.....'\n";
         SharedLibrary obj2 = new SharedLibrary();
-        obj2.readConfig(commonConfig, sl);
+        obj2.readConfig(this, sl);
         tmp+="print 'Step 1 of 5: Configuring Shared Library.....'\n";
         tmp+=obj2.returnScript();
         
@@ -51,15 +56,15 @@ public class WebSphereConfiguration {
         
         GlobalSecurity obj4 = new GlobalSecurity();        
         tmp+="print 'Step 3 of 5: Configuring Global Security.....'\n";
-        tmp+=obj4.readConfigAndReturnScript(commonConfig, gs);
+        tmp+=obj4.readConfigAndReturnScript(this, gs);
         
         
         DataSources obj5 = new DataSources();  
         tmp+="print 'Step 4 of 5: Configuring Data Sources .....'\n";
-        tmp+=obj5.returnScript(commonConfig, commonDSConfig, ds);
+        tmp+=obj5.returnScript(this, commonDSConfig, ds);
         
         tmp+="print 'Step 5 of 5: Configuring JVM heap Size .....'\n";
-        tmp+=jvmHeapSize.returnScript(commonConfig.getServerName(), commonConfig.getNodeName()); 
+        tmp+=jvmHeapSize.returnScript(this.getServerName(), this.getNodeName()); 
         tmp+="AdminConfig.save()\n";
         tmp+="print 'Configuration of WAS Profile is Complete.'\n";
         
@@ -90,7 +95,7 @@ public class WebSphereConfiguration {
         if(f.exists()){
             log.info("Profile already exists!! Deleting existing profile...");
             DeleteProfile objdel = new DeleteProfile(); 
-            objdel.readConfig(profile, commonConfig);
+            objdel.readConfig(profile, this);
             File batch1=null, batch2=null, batch3=null, batch4=null, batch5=null;
             if(platform.equals("Windows")){
                 batch1 = new File("stopServer.cmd");

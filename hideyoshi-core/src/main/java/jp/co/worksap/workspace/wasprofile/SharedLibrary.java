@@ -21,10 +21,10 @@ public class SharedLibrary {
         clMode = config.getClMode();
     }
  */   
-    public void readConfig(CommonWASConfiguration commonConfig, SharedLibraryConfiguration config) {         
-        cell = commonConfig.getCellName();
-        node = commonConfig.getNodeName();
-        server = commonConfig.getServerName();
+    public void readConfig(WebSphereConfiguration wasConfig, SharedLibraryConfiguration config) {
+        cell = wasConfig.getCellName();
+        node = wasConfig.getNodeName();
+        server = wasConfig.getServerName();
         libName = config.getLibName();
         libClassPath = config.getLibClassPath();
         clMode = config.getClMode();

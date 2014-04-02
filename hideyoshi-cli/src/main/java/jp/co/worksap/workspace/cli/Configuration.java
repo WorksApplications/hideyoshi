@@ -12,7 +12,6 @@ import jp.co.worksap.workspace.repository.git.GitHookConfiguration;
 import jp.co.worksap.workspace.repository.git.GitRepositoryConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstallConfiguration;
 import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
-import jp.co.worksap.workspace.wasprofile.CommonWASConfiguration;
 import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
 import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
 import jp.co.worksap.workspace.wasprofile.GlobalSecurityConfigurationContainer;
@@ -31,7 +30,6 @@ class Configuration {
     private EclipseConfiguration eclipse;
     private LombokConfiguration lombok;
     private DB2Configuration db2;
-    private CommonWASConfiguration wasCommonConfig;
     private CreateProfileConfiguration wasProfileConfig;
     private SharedLibraryConfiguration sharedLibraryConfig;
     private JDBCProviderConfiguration jdbcProviderConfig;
@@ -39,7 +37,6 @@ class Configuration {
     private CommonDSConfiguration dataSourcesCommonConfig;
     private DataSourcesConfigurationContainer dataSourcesConfig;
     private WASInstallConfiguration wasInstall;
-    private CommonWASConfiguration commonWASConfig;
     private CreateProfileConfiguration wasProfile;
     private SharedLibraryConfiguration slConfig;
     private JDBCProviderConfiguration jdbcConfig;

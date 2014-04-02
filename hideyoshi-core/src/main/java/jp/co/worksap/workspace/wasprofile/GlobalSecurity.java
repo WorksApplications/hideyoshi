@@ -3,11 +3,11 @@ package jp.co.worksap.workspace.wasprofile;
 import java.util.ArrayList;
 
 public class GlobalSecurity {
-    public String readConfigAndReturnScript(CommonWASConfiguration commonConfig, GlobalSecurityConfigurationContainer config){
+    public String readConfigAndReturnScript(WebSphereConfiguration wasConfig, GlobalSecurityConfigurationContainer config){
         ArrayList<GlobalSecurityConfiguration> data = config.get("data");
         String tmp="";
         for (GlobalSecurityConfiguration g : data) {   
-            String cell = commonConfig.getCellName();
+            String cell = wasConfig.getCellName();
             String alias = g.getAlias();
             String userid = g.getUserid();
             String password = g.getPassword();

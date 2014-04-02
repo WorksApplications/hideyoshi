@@ -105,7 +105,7 @@ public class DataSources {
         return exitVal;
     }  
 */    
-    public String returnScript(CommonWASConfiguration commonConfig, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) {        
+    public String returnScript(WebSphereConfiguration wasConfig, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) {        
         ArrayList<DataSourcesConfiguration> dataSources = ds.get("dataSources");
         String tmp="";
         for (DataSourcesConfiguration d : dataSources) {               
@@ -113,7 +113,7 @@ public class DataSources {
             jndiName = d.getJndiName();
             databaseName = commonDSConfig.getDatabaseName();
             driverType = commonDSConfig.getDriverType();
-            serverName = commonConfig.getServerName();
+            serverName = wasConfig.getServerName();
             portNumber = commonDSConfig.getPortNumber();
             dataStoreHelperClassName = commonDSConfig.getDataStoreHelperClassName();
             componentManagedAuthenticationAlias = d.getComponentManagedAuthenticationAlias();

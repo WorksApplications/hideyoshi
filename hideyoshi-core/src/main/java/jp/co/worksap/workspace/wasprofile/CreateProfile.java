@@ -18,11 +18,11 @@ public class CreateProfile {
         cellName = config.getCellName();      
     }
     */
-    public void readConfig(CommonWASConfiguration commonConfig, CreateProfileConfiguration config) {        
+    public void readConfig(WebSphereConfiguration wasConfig, CreateProfileConfiguration config) {
         installPath = config.getInstallPath();
         profileName = config.getProfileName();
-        nodeName = commonConfig.getNodeName();
-        cellName = commonConfig.getCellName();      
+        nodeName =  wasConfig.getNodeName();
+        cellName =  wasConfig.getCellName();
     }
 
     /*
