@@ -3,7 +3,7 @@ package jp.co.worksap.workspace.wasprofile;
 import java.util.List;
 
 public class DataSources {
-    public String returnScript(WebSphereConfiguration wasConfig) {
+    public String returnScript(WebSphereProfileConfiguration wasConfig) {
         List<DataSourceConfiguration> dataSourceList = wasConfig.getDataSource();
         if (dataSourceList == null) {
             return "";

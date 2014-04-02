@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GlobalSecurityConfigurator {
-    public String returnScript(WebSphereConfiguration wasConfig){
+    public String returnScript(WebSphereProfileConfiguration wasConfig){
         Map<String,List<GlobalSecurityConfiguration>> config = wasConfig.getGlobalSecurity();
         if (config == null) {
             return "";

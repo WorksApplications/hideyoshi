@@ -5,12 +5,12 @@ public class DeleteProfile {
     private String installPath;
     private String serverName;
     
-    public void readConfig(ProfileConfiguration config, WebSphereConfiguration wasConfig){
-        profileName = config.getProfileName();
+    public void readConfig(WebSphereProfileConfiguration wasConfig){
+        profileName = wasConfig.getProfileName();
         serverName = wasConfig.getServerName();
-        installPath = config.getInstallPath();
+        installPath = wasConfig.getInstallPath();
     }
-    
+
     public String getStopServerScript(){
         String tmp="";        
         tmp+="cd "+installPath+"\\WebSphere\\AppServer\\bin\n";

@@ -8,7 +8,7 @@ public class SharedLibraryConfigurator {
     private String libClassPath;
     private String clMode;
 
-    public void readConfig(WebSphereConfiguration wasConfig) {
+    public void readConfig(WebSphereProfileConfiguration wasConfig) {
         cell = wasConfig.getCellName();
         node = wasConfig.getNodeName();
         server = wasConfig.getServerName();

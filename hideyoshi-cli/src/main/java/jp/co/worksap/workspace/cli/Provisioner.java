@@ -19,7 +19,8 @@ import jp.co.worksap.workspace.repository.git.GitInitializer;
 import jp.co.worksap.workspace.repository.git.GitRepositoryConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstallConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstaller;
-import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
+import jp.co.worksap.workspace.wasprofile.WebSphereProfileConfiguration;
+import jp.co.worksap.workspace.wasprofile.WebSphereProfileCreator;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.base.Optional;
@@ -33,17 +34,17 @@ final class Provisioner {
     private final LombokInstaller lombokInstaller;
     private final DB2Installer db2Installer;
     private final WASInstaller wasInstaller;
-    private final WebSphereConfiguration wasConfigure;
+    private final WebSphereProfileCreator wasProfileCreator;
     private final GitInitializer gitInitializer;
 
-    Provisioner(PackageManagementFacade packageManagerFacade, EclipseInstaller eclipseInstaller, EclipsePluginInstaller eclipsePluginInstaller, LombokInstaller lombokInstaller, DB2Installer db2Installer, WASInstaller wasInstaller, WebSphereConfiguration wasConfigure, GitInitializer gitInitializer) {
+    Provisioner(PackageManagementFacade packageManagerFacade, EclipseInstaller eclipseInstaller, EclipsePluginInstaller eclipsePluginInstaller, LombokInstaller lombokInstaller, DB2Installer db2Installer, WASInstaller wasInstaller, WebSphereProfileCreator wasProfileCreator, GitInitializer gitInitializer) {
         this.packageManagerFacade = checkNotNull(packageManagerFacade);
         this.eclipseInstaller = checkNotNull(eclipseInstaller);
         this.eclipsePluginInstaller = checkNotNull(eclipsePluginInstaller);
         this.lombokInstaller = checkNotNull(lombokInstaller);
         this.db2Installer = checkNotNull(db2Installer);
         this.wasInstaller = checkNotNull(wasInstaller);
-        this.wasConfigure = checkNotNull(wasConfigure);
+        this.wasProfileCreator = checkNotNull(wasProfileCreator);
         this.gitInitializer = checkNotNull(gitInitializer);
     }
 
@@ -112,8 +113,9 @@ final class Provisioner {
     }
     
     public void configureWebsphere(Configuration configuration) throws IOException {
-        if (wasConfigure != null) {
-            wasConfigure.createAndConfigureProfile();
+        WebSphereProfileConfiguration wasProfileConfiguration = configuration.getWasProfile();
+        if (wasProfileConfiguration != null) {
+            wasProfileCreator.createAndConfigureProfile(wasProfileConfiguration);
         } else {
             log.info("no WebSphere Configuration is required");
         } 

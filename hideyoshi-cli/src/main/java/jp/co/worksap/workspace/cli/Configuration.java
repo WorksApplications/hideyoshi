@@ -11,9 +11,7 @@ import jp.co.worksap.workspace.packagemanagement.Package;
 import jp.co.worksap.workspace.repository.git.GitHookConfiguration;
 import jp.co.worksap.workspace.repository.git.GitRepositoryConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstallConfiguration;
-import jp.co.worksap.workspace.wasprofile.ProfileConfiguration;
-import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
-import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
+import jp.co.worksap.workspace.wasprofile.WebSphereProfileConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,13 +25,8 @@ class Configuration {
     private EclipseConfiguration eclipse;
     private LombokConfiguration lombok;
     private DB2Configuration db2;
-    private ProfileConfiguration wasProfileConfig;
-    private SharedLibraryConfiguration sharedLibraryConfig;
-    private JDBCProviderConfiguration jdbcProviderConfig;
+    private WebSphereProfileConfiguration wasProfile;
     private WASInstallConfiguration wasInstall;
-    private ProfileConfiguration wasProfile;
-    private SharedLibraryConfiguration slConfig;
-    private JDBCProviderConfiguration jdbcConfig;
     private Map<String, GitRepositoryConfiguration> repository;
     private Map<String, GitHookConfiguration> gitHook;
 }
