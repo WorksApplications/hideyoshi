@@ -1,11 +1,19 @@
 package jp.co.worksap.workspace.wasprofile;
 
 
-import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
-public class GlobalSecurityConfiguration {   
+
+@Data
+@Setter(AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
+public class GlobalSecurityConfiguration {
     private String alias;
     private String userid;
-    private String password;    
+    private String password;
 }

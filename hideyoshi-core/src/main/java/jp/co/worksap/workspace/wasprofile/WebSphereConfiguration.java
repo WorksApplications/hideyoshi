@@ -2,6 +2,8 @@ package jp.co.worksap.workspace.wasprofile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import jp.co.worksap.workspace.common.PipingDaemon;
 import lombok.Getter;
@@ -22,8 +24,10 @@ public class WebSphereConfiguration {
     private String installPath;
     private String platform;
     private JVMHeapSizeConfiguration jvmHeapSize;
+    private SharedLibraryConfiguration sharedLibrary;
+    private Map<String, List<GlobalSecurityConfiguration>> globalSecurity;
 
-    public int createAndConfigureProfile(CreateProfileConfiguration profile, SharedLibraryConfiguration sl, JDBCProviderConfiguration jdbc, GlobalSecurityConfigurationContainer gs, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
+    public int createAndConfigureProfile(CreateProfileConfiguration profile, JDBCProviderConfiguration jdbc, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
         int exitVal=0;
         String tmp="";
         
@@ -43,8 +47,8 @@ public class WebSphereConfiguration {
         installPath = obj1.getInstallPath();
         profilePath = installPath+"\\WebSphere\\AppServer\\profiles\\"+obj1.getProfileName()+"\\bin";
         tmp+="print 'Starting Configuration of WAS profile.....'\n";
-        SharedLibrary obj2 = new SharedLibrary();
-        obj2.readConfig(this, sl);
+        SharedLibraryConfigurator obj2 = new SharedLibraryConfigurator();
+        obj2.readConfig(this);
         tmp+="print 'Step 1 of 5: Configuring Shared Library.....'\n";
         tmp+=obj2.returnScript();
         
@@ -54,9 +58,9 @@ public class WebSphereConfiguration {
         tmp+="print 'Step 2 of 5: Configuring JDBC Provider.....'\n";
         tmp+=obj3.returnScript();
         
-        GlobalSecurity obj4 = new GlobalSecurity();        
+        GlobalSecurityConfigurator obj4 = new GlobalSecurityConfigurator();        
         tmp+="print 'Step 3 of 5: Configuring Global Security.....'\n";
-        tmp+=obj4.readConfigAndReturnScript(this, gs);
+        tmp+=obj4.returnScript(this);
         
         
         DataSources obj5 = new DataSources();  

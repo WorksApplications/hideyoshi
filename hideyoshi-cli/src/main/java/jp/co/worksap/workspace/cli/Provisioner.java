@@ -22,9 +22,7 @@ import jp.co.worksap.workspace.wasinstall.WASInstaller;
 import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
 import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
 import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
-import jp.co.worksap.workspace.wasprofile.GlobalSecurityConfigurationContainer;
 import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
-import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
 import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
 import lombok.extern.slf4j.Slf4j;
 
@@ -119,15 +117,12 @@ final class Provisioner {
     
     public void configureWebsphere(Configuration configuration) throws IOException{
         CreateProfileConfiguration wasProfile = configuration.getWasProfileConfig();
-        SharedLibraryConfiguration slConfig = configuration.getSharedLibraryConfig();
         JDBCProviderConfiguration jdbcConfig = configuration.getJdbcProviderConfig();
-        GlobalSecurityConfigurationContainer gsConfig = configuration.getGlobalSecurityConfig();
         CommonDSConfiguration commonDSConfig = configuration.getDataSourcesCommonConfig();
         DataSourcesConfigurationContainer dsConfig = configuration.getDataSourcesConfig();
-        if (wasProfile!=null && slConfig!=null && jdbcConfig!=null && gsConfig!=null && dsConfig!=null) {
-            wasConfigure.createAndConfigureProfile(wasProfile, slConfig, jdbcConfig, gsConfig, commonDSConfig, dsConfig);
-        }
-        else {
+        if (wasProfile!=null && jdbcConfig!=null && dsConfig!=null) {
+            wasConfigure.createAndConfigureProfile(wasProfile, jdbcConfig, commonDSConfig, dsConfig);
+        } else {
             log.info("no WebSphere Configuration is required");
         } 
     }
