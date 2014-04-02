@@ -6,19 +6,18 @@ import java.util.Map;
 
 import jp.co.worksap.workspace.database.db2.DB2Configuration;
 import jp.co.worksap.workspace.ide.eclipse.EclipseConfiguration;
-import jp.co.worksap.workspace.wasprofile.CommonWASConfiguration;
-import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
-import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
-import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
-import jp.co.worksap.workspace.wasprofile.GlobalSecurityConfigurationContainer;
-import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
-import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
-import jp.co.worksap.workspace.wasprofile.JVMHeapSizeConfiguration;
 import jp.co.worksap.workspace.lombok.LombokConfiguration;
 import jp.co.worksap.workspace.packagemanagement.Package;
 import jp.co.worksap.workspace.repository.git.GitHookConfiguration;
 import jp.co.worksap.workspace.repository.git.GitRepositoryConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstallConfiguration;
+import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
+import jp.co.worksap.workspace.wasprofile.CommonWASConfiguration;
+import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
+import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
+import jp.co.worksap.workspace.wasprofile.GlobalSecurityConfigurationContainer;
+import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
+import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,7 +38,6 @@ class Configuration {
     private GlobalSecurityConfigurationContainer globalSecurityConfig;
     private CommonDSConfiguration dataSourcesCommonConfig;
     private DataSourcesConfigurationContainer dataSourcesConfig;
-    private JVMHeapSizeConfiguration jvmHeapSizeConfig;
     private WASInstallConfiguration wasInstall;
     private CommonWASConfiguration commonWASConfig;
     private CreateProfileConfiguration wasProfile;
@@ -48,7 +46,6 @@ class Configuration {
     private GlobalSecurityConfigurationContainer gsConfig;
     private CommonDSConfiguration commonDSConfig;
     private DataSourcesConfigurationContainer dsConfig;
-    private JVMHeapSizeConfiguration jvmConfig;
     private Map<String, GitRepositoryConfiguration> repository;
     private Map<String, GitHookConfiguration> gitHook;
 }

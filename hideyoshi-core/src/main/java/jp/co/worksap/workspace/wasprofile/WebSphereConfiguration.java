@@ -9,13 +9,16 @@ import lombok.extern.slf4j.Slf4j;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
+// TODO add setter to load data from configuration file
+// TODO move logic to other class
 @Slf4j
 public class WebSphereConfiguration {
     private String profilePath; 
     private String installPath;
-    private String platform;;
-     
-    public int createAndConfigureProfile(CommonWASConfiguration commonConfig, CreateProfileConfiguration profile, SharedLibraryConfiguration sl, JDBCProviderConfiguration jdbc, GlobalSecurityConfigurationContainer gs, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds, JVMHeapSizeConfiguration jvm ) throws IOException{
+    private String platform;
+    private JVMHeapSizeConfiguration jvmHeapSize;
+
+    public int createAndConfigureProfile(CommonWASConfiguration commonConfig, CreateProfileConfiguration profile, SharedLibraryConfiguration sl, JDBCProviderConfiguration jdbc, GlobalSecurityConfigurationContainer gs, CommonDSConfiguration commonDSConfig, DataSourcesConfigurationContainer ds) throws IOException{
         int exitVal=0;
         String tmp="";
         
@@ -55,10 +58,8 @@ public class WebSphereConfiguration {
         tmp+="print 'Step 4 of 5: Configuring Data Sources .....'\n";
         tmp+=obj5.returnScript(commonConfig, commonDSConfig, ds);
         
-        JVMHeapSize obj6 = new JVMHeapSize();
-        obj6.readConfig(commonConfig, jvm);
         tmp+="print 'Step 5 of 5: Configuring JVM heap Size .....'\n";
-        tmp+=obj6.returnScript(); 
+        tmp+=jvmHeapSize.returnScript(commonConfig.getServerName(), commonConfig.getNodeName()); 
         tmp+="AdminConfig.save()\n";
         tmp+="print 'Configuration of WAS Profile is Complete.'\n";
         

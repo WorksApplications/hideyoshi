@@ -25,7 +25,6 @@ import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
 import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
 import jp.co.worksap.workspace.wasprofile.GlobalSecurityConfigurationContainer;
 import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
-import jp.co.worksap.workspace.wasprofile.JVMHeapSizeConfiguration;
 import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
 import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -119,7 +118,7 @@ final class Provisioner {
         }
     }
     
-    public void configureWebsphere(Configuration configuration) throws IOException{        
+    public void configureWebsphere(Configuration configuration) throws IOException{
         CreateProfileConfiguration wasProfile = configuration.getWasProfileConfig();
         CommonWASConfiguration commonWASConfig = configuration.getWasCommonConfig();
         SharedLibraryConfiguration slConfig = configuration.getSharedLibraryConfig();
@@ -127,9 +126,8 @@ final class Provisioner {
         GlobalSecurityConfigurationContainer gsConfig = configuration.getGlobalSecurityConfig();
         CommonDSConfiguration commonDSConfig = configuration.getDataSourcesCommonConfig();
         DataSourcesConfigurationContainer dsConfig = configuration.getDataSourcesConfig();
-        JVMHeapSizeConfiguration jvmConfig = configuration.getJvmHeapSizeConfig();     
-        if (wasProfile!=null && slConfig!=null && jdbcConfig!=null && gsConfig!=null && dsConfig!=null && jvmConfig!=null) {            
-            wasConfigure.createAndConfigureProfile(commonWASConfig, wasProfile, slConfig, jdbcConfig, gsConfig, commonDSConfig, dsConfig, jvmConfig);            
+        if (wasProfile!=null && slConfig!=null && jdbcConfig!=null && gsConfig!=null && dsConfig!=null) {
+            wasConfigure.createAndConfigureProfile(commonWASConfig, wasProfile, slConfig, jdbcConfig, gsConfig, commonDSConfig, dsConfig);
         }
         else {
             log.info("no WebSphere Configuration is required");
