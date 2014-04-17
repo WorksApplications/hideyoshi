@@ -25,7 +25,7 @@ public class ConfigurationLoaderTest {
     public void testEmptyConfiguration() throws IOException {
         File file = folder.newFile();
         Files.write("{\"targetPackages\": []}", file, Charsets.UTF_8);
-        Configuration config = new ConfigurationLoader().loadFrom(file);
+        Configuration config = new ConfigurationLoader().loadFrom(file, null);
 
         assertThat(config.getTargetPackage(), is(empty()));
     }
@@ -34,7 +34,7 @@ public class ConfigurationLoaderTest {
     public void testWithOneTargetPackage() throws IOException {
         File file = folder.newFile();
         Files.write("{\"targetPackages\": [{\"name\":\"wget\"}]}", file, Charsets.UTF_8);
-        Configuration config = new ConfigurationLoader().loadFrom(file);
+        Configuration config = new ConfigurationLoader().loadFrom(file, null);
 
         assertThat(config.getTargetPackage(), contains(Package.of("wget")));
     }
@@ -43,7 +43,7 @@ public class ConfigurationLoaderTest {
     public void testHoconFormat() throws IOException {
         File file = folder.newFile();
         Files.write("targetPackages: [{name:wget}]", file, Charsets.UTF_8);
-        Configuration config = new ConfigurationLoader().loadFrom(file);
+        Configuration config = new ConfigurationLoader().loadFrom(file, null);
 
         assertThat(config.getTargetPackage(), contains(Package.of("wget")));
     }
@@ -52,7 +52,7 @@ public class ConfigurationLoaderTest {
     public void testWebSphereProfile() throws IOException {
         File file = folder.newFile();
         Files.write("wasProfile: {cellName: \"cell-name\", dataSource: [{databaseName: database-name}]}", file, Charsets.UTF_8);
-        Configuration config = new ConfigurationLoader().loadFrom(file);
+        Configuration config = new ConfigurationLoader().loadFrom(file, null);
 
         assertThat(config.getWasProfile().getCellName(), is("cell-name"));
         assertThat(config.getWasProfile().getDataSource().size(), is(1));
