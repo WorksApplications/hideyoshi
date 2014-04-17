@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 class Configuration {
     private File targetLocation = new File(".");
-    private List<Package> targetPackages;
+    private List<Package> targetPackage;
     private EclipseConfiguration eclipse;
     private LombokConfiguration lombok;
     private DB2Configuration db2;

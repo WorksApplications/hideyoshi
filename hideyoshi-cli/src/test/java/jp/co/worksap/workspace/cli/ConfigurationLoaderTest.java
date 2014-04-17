@@ -27,7 +27,7 @@ public class ConfigurationLoaderTest {
         Files.write("{\"targetPackages\": []}", file, Charsets.UTF_8);
         Configuration config = new ConfigurationLoader().loadFrom(file);
 
-        assertThat(config.getTargetPackages(), is(empty()));
+        assertThat(config.getTargetPackage(), is(empty()));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class ConfigurationLoaderTest {
         Files.write("{\"targetPackages\": [{\"name\":\"wget\"}]}", file, Charsets.UTF_8);
         Configuration config = new ConfigurationLoader().loadFrom(file);
 
-        assertThat(config.getTargetPackages(), contains(Package.of("wget")));
+        assertThat(config.getTargetPackage(), contains(Package.of("wget")));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class ConfigurationLoaderTest {
         Files.write("targetPackages: [{name:wget}]", file, Charsets.UTF_8);
         Configuration config = new ConfigurationLoader().loadFrom(file);
 
-        assertThat(config.getTargetPackages(), contains(Package.of("wget")));
+        assertThat(config.getTargetPackage(), contains(Package.of("wget")));
     }
 
     @Test

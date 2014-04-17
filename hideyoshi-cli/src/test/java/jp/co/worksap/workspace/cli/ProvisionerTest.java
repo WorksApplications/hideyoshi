@@ -64,7 +64,7 @@ public class ProvisionerTest {
     @Test
     public void callPackageInstallWhenPackageIsNotEmpty() throws IOException {
         List<Package> packageList = Lists.newArrayList(Package.of("git"));
-        configuration.setTargetPackages(packageList);
+        configuration.setTargetPackage(packageList);
         assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasProfile, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(packageManagerFacade, only()).install(Matchers.<Iterable<Package>> any());
     }
@@ -72,7 +72,7 @@ public class ProvisionerTest {
     @Test
     public void skipPackageInstallWhenPackageIsEmpty() throws IOException {
         List<Package> emptyList = Lists.newArrayList();
-        configuration.setTargetPackages(emptyList);
+        configuration.setTargetPackage(emptyList);
         assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasProfile, gitInitializer).execute(configuration), is(StatusCode.NORMAL));
         verify(packageManagerFacade, never()).install(Matchers.<Iterable<Package>> any());
     }

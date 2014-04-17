@@ -95,9 +95,9 @@ final class Provisioner {
     }
 
     private void installPackages(Configuration configuration) {
-        Iterable<Package> targetPackages = configuration.getTargetPackages();
-        if (targetPackages != null && !Iterables.isEmpty(targetPackages)) {
-            packageManagerFacade.install(targetPackages);
+        Iterable<Package> targetPackage = configuration.getTargetPackage();
+        if (targetPackage != null && !Iterables.isEmpty(targetPackage)) {
+            packageManagerFacade.install(targetPackage);
         } else {
             log.info("no package is required");
         }
