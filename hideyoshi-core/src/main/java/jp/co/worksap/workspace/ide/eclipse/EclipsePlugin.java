@@ -3,16 +3,14 @@ package jp.co.worksap.workspace.ide.eclipse;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-
-import lombok.NonNull;
 import lombok.Value;
+
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 @Value
 @JsonDeserialize(using = EclipsePluginDeserializer.class)
 public class EclipsePlugin {
     @Nonnull
-    @NonNull
     private String id;
     @Nullable
     private String version;
