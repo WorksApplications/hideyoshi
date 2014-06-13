@@ -4,11 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
 
-import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -53,14 +51,30 @@ public class HttpDownloaderTest {
     private static final String EXPECTED_USER = "user";
     private static final String EXPECTED_PASSWORD = "password";
     private static final String WRONG_PASSWORD = "pazzword";
+    private static final String REALM = "realm";
+    private static final String NONCE = "nonce";
 
     @Rule
     public final TextFromStandardInputStream mockedSystemIn = emptyStandardInputStream();
 
     @Test
-    public void testDownloadSuccessfully() throws IOException {
+    public void testDownloadSuccessfullyViaBasicAuth() throws IOException {
         @Cleanup
-        Server server = runServer(10000);
+        Server server = runServer(10000, new BasicRequestHandler());
+
+        File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
+        tempFile.delete();
+
+        mockedSystemIn.provideText(EXPECTED_USER + "\n" + EXPECTED_PASSWORD + "\n");
+        new HttpDownloader().download(server.getUri(), tempFile);
+
+        assertThat(tempFile.exists(), is(true));
+    }
+
+    @Test
+    public void testDownloadSuccessfullyViaDigestAuth() throws IOException {
+        @Cleanup
+        Server server = runServer(10001, new DigestRequestHandler());
 
         File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
         tempFile.delete();
@@ -72,9 +86,23 @@ public class HttpDownloaderTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testDownloadWithWrongPassword() throws IOException {
+    public void testDownloadWithWrongPasswordViaBasicAuth() throws IOException {
         @Cleanup
-        Server server = runServer(10001);
+        Server server = runServer(10002, new BasicRequestHandler());
+
+        File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
+        tempFile.delete();
+
+        mockedSystemIn.provideText(EXPECTED_USER + "\n" + WRONG_PASSWORD + "\n");
+        new HttpDownloader().download(server.getUri(), tempFile);
+
+        assertThat(tempFile.exists(), is(false));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDownloadWithWrongPasswordViaDigestAuth() throws IOException {
+        @Cleanup
+        Server server = runServer(10003, new DigestRequestHandler());
 
         File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
         tempFile.delete();
@@ -89,14 +117,14 @@ public class HttpDownloaderTest {
      * @param port TCP port number to listen. Please change this value when you execute this method continuously, it is good to avoid port conflict.
      * @see http://hc.apache.org/httpcomponents-core-4.3.x/httpcore/examples/org/apache/http/examples/ElementalHttpServer.java
      */
-    private Server runServer(int port) throws UnknownHostException {
+    private Server runServer(int port, HttpRequestHandler handler) throws UnknownHostException {
         HttpProcessor httpproc = HttpProcessorBuilder.create()
                 .add(new ResponseDate())
                 .add(new ResponseServer("HttpDownloaderTest/1.0"))
                 .add(new ResponseContent())
                 .add(new ResponseConnControl()).build();
         UriHttpRequestHandlerMapper reqistry = new UriHttpRequestHandlerMapper();
-        reqistry.register("*", new BasicRequestHandler());
+        reqistry.register("*", handler);
         HttpService service = new HttpService(httpproc, reqistry);
         RequestListener listener = new RequestListener(service, port);
 
@@ -115,7 +143,7 @@ public class HttpDownloaderTest {
                 HttpContext context) throws HttpException, IOException {
             Header auth = request.getFirstHeader("Authorization");
             if (auth == null) {
-                response.setHeader(new BasicHeader("WWW-Authenticate", "Basic realm=\"realm\""));
+                response.setHeader(new BasicHeader("WWW-Authenticate", "Basic realm=\"" + REALM + "\""));
                 response.setStatusCode(HttpStatus.SC_UNAUTHORIZED);
                 return;
             }
@@ -129,6 +157,33 @@ public class HttpDownloaderTest {
             String encodedUserAndPass = value.substring("Basic ".length());
             byte[] userAndPass = Base64.decodeBase64(encodedUserAndPass.getBytes(Charsets.UTF_8));
             if (new String(userAndPass, Charsets.UTF_8).equals(EXPECTED_USER + ":" + EXPECTED_PASSWORD)) {
+                response.setStatusCode(HttpStatus.SC_OK);
+            } else {
+                response.setStatusCode(HttpStatus.SC_UNAUTHORIZED);
+            }
+        }
+    }
+
+    private static final class DigestRequestHandler implements
+            HttpRequestHandler {
+        @Override
+        public void handle(HttpRequest request, HttpResponse response,
+                HttpContext context) throws HttpException, IOException {
+            Header auth = request.getFirstHeader("Authorization");
+            if (auth == null) {
+                response.setHeader(new BasicHeader("WWW-Authenticate", "Digest realm=\"" + REALM + "\", nonce=\"" + NONCE + "\""));
+                response.setStatusCode(HttpStatus.SC_UNAUTHORIZED);
+                return;
+            }
+
+            String value = auth.getValue();
+            if (! value.startsWith("Digest ")) {
+                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                return;
+            }
+
+            String encodedUserAndPass = value.substring("Digest ".length());
+            if (encodedUserAndPass.hashCode() == -2062858579) { // it is troublesome to emulate encoding algorithm at here, we just check hashCode instead.
                 response.setStatusCode(HttpStatus.SC_OK);
             } else {
                 response.setStatusCode(HttpStatus.SC_UNAUTHORIZED);
