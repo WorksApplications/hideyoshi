@@ -2,6 +2,7 @@ package jp.co.worksap.workspace.common.download;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -42,7 +43,9 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.apache.http.protocol.UriHttpRequestHandlerMapper;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
 import com.google.common.base.Charsets;
 
@@ -51,42 +54,35 @@ public class HttpDownloaderTest {
     private static final String EXPECTED_PASSWORD = "password";
     private static final String WRONG_PASSWORD = "pazzword";
 
+    @Rule
+    public final TextFromStandardInputStream mockedSystemIn = emptyStandardInputStream();
+
     @Test
     public void testDownloadSuccessfully() throws IOException {
-        InputStream defaultSystemIn = System.in;
-        // input username and password by System.in
-        System.setIn(new ByteArrayInputStream((EXPECTED_USER + "\n" + EXPECTED_PASSWORD + "\n").getBytes()));
         @Cleanup
         Server server = runServer(10000);
 
-        try {
-            File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
-            tempFile.delete();
+        File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
+        tempFile.delete();
 
-            new HttpDownloader().download(server.getUri(), tempFile);
-            assertThat(tempFile.exists(), is(true));
-        } finally {
-            System.setIn(defaultSystemIn);
-        }
+        mockedSystemIn.provideText(EXPECTED_USER + "\n" + EXPECTED_PASSWORD + "\n");
+        new HttpDownloader().download(server.getUri(), tempFile);
+
+        assertThat(tempFile.exists(), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDownloadWithWrongPassword() throws IOException {
-        InputStream defaultSystemIn = System.in;
-        // input username and password by System.in
-        System.setIn(new ByteArrayInputStream((EXPECTED_USER + "\n" + WRONG_PASSWORD + "\n").getBytes()));
         @Cleanup
         Server server = runServer(10001);
 
-        try {
-            File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
-            tempFile.delete();
+        File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
+        tempFile.delete();
 
-            new HttpDownloader().download(server.getUri(), tempFile);
-            assertThat(tempFile.exists(), is(false));
-        } finally {
-            System.setIn(defaultSystemIn);
-        }
+        mockedSystemIn.provideText(EXPECTED_USER + "\n" + WRONG_PASSWORD + "\n");
+        new HttpDownloader().download(server.getUri(), tempFile);
+
+        assertThat(tempFile.exists(), is(false));
     }
 
     /**
