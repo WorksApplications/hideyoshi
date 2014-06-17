@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Cleanup;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -24,6 +25,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import com.google.common.base.Objects;
 
 @AllArgsConstructor
+@Slf4j
 abstract class AbsHttpDownloader extends Downloader {
     @Nonnull
     @Getter(AccessLevel.PROTECTED)
@@ -42,6 +44,7 @@ abstract class AbsHttpDownloader extends Downloader {
 
         @Cleanup
         CloseableHttpClient client = buildHttpClientFor(from);
+        log.debug("Downloading from {}...", from);
         @Cleanup
         CloseableHttpResponse response = client.execute(targetHost, httpGet, localContext);
         int status = response.getStatusLine().getStatusCode();
@@ -56,6 +59,7 @@ abstract class AbsHttpDownloader extends Downloader {
             copyToLocal(to, fileName, inputStream, fileSize);
         } else if (status == HttpStatus.SC_UNAUTHORIZED) {
             client.close();
+            log.info("authentication is required for {}", from);
             retry(from, to, response.getFirstHeader("WWW-Authenticate"));
         } else {
             throw new IllegalStateException(
