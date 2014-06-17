@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import jp.co.worksap.workspace.common.download.AuthenticationInfoProvider;
 import jp.co.worksap.workspace.common.download.Downloader;
 
 import org.junit.Test;
@@ -16,6 +17,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
 public class DownloadFileTest {
+    private final AuthenticationInfoProvider infoProvider = new NeverCalledProvider();
+
     private String relativeToAbsolutePath(String url) throws IOException {
         if (url.startsWith("./")) {
             String simplePath = Files.simplifyPath(new File(".").getAbsolutePath().replace('\\', '/'));
@@ -29,7 +32,7 @@ public class DownloadFileTest {
     public void downloadFileLocal() throws IOException {
         File downloadedFile = File.createTempFile("eclipse", ".download");
         URL url = new URL(relativeToAbsolutePath("./src/test/resources/.gitignore"));
-        Downloader downloadFile = Downloader.createFor(url);
+        Downloader downloadFile = Downloader.createFor(url, infoProvider);
         downloadFile.download(url, downloadedFile);
         assertTrue(Files.equal(new File("src/test/resources", ".gitignore"), downloadedFile));
     }
@@ -38,7 +41,7 @@ public class DownloadFileTest {
     public void downloadFileHTTP() throws IOException {
         File downloadedFile = File.createTempFile("logo", ".download");
         URL url = new URL("http://career.worksap.co.jp/common/img/logo.gif");
-        Downloader downloadFile = Downloader.createFor(url);
+        Downloader downloadFile = Downloader.createFor(url, infoProvider);
         downloadFile.download(url, downloadedFile);
 
         assertThat(downloadedFile.exists(), is(true));

@@ -2,7 +2,6 @@ package jp.co.worksap.workspace.common.download;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
 
 import java.io.Closeable;
 import java.io.File;
@@ -41,11 +40,10 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.apache.http.protocol.UriHttpRequestHandlerMapper;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.Closer;
 
 public class HttpDownloaderTest {
     private static final String EXPECTED_USER = "user";
@@ -54,61 +52,58 @@ public class HttpDownloaderTest {
     private static final String REALM = "realm";
     private static final String NONCE = "nonce";
 
-    @Rule
-    public final TextFromStandardInputStream mockedSystemIn = emptyStandardInputStream();
-
     @Test
     public void testDownloadSuccessfullyViaBasicAuth() throws IOException {
+        AuthenticationInfoProvider infoProvider = new ConstInfoProvider(EXPECTED_USER, EXPECTED_PASSWORD);
         @Cleanup
         Server server = runServer(10000, new BasicRequestHandler());
 
         File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
         tempFile.delete();
 
-        mockedSystemIn.provideText(EXPECTED_USER + "\n" + EXPECTED_PASSWORD + "\n");
-        new HttpDownloader().download(server.getUri(), tempFile);
+        new HttpDownloader(infoProvider).download(server.getUri(), tempFile);
 
         assertThat(tempFile.exists(), is(true));
     }
 
     @Test
     public void testDownloadSuccessfullyViaDigestAuth() throws IOException {
+        AuthenticationInfoProvider infoProvider = new ConstInfoProvider(EXPECTED_USER, EXPECTED_PASSWORD);
         @Cleanup
         Server server = runServer(10001, new DigestRequestHandler());
 
         File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
         tempFile.delete();
 
-        mockedSystemIn.provideText(EXPECTED_USER + "\n" + EXPECTED_PASSWORD + "\n");
-        new HttpDownloader().download(server.getUri(), tempFile);
+        new HttpDownloader(infoProvider).download(server.getUri(), tempFile);
 
         assertThat(tempFile.exists(), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDownloadWithWrongPasswordViaBasicAuth() throws IOException {
+        AuthenticationInfoProvider infoProvider = new ConstInfoProvider(EXPECTED_USER, WRONG_PASSWORD);
         @Cleanup
         Server server = runServer(10002, new BasicRequestHandler());
 
         File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
         tempFile.delete();
 
-        mockedSystemIn.provideText(EXPECTED_USER + "\n" + WRONG_PASSWORD + "\n");
-        new HttpDownloader().download(server.getUri(), tempFile);
+        new HttpDownloader(infoProvider).download(server.getUri(), tempFile);
 
         assertThat(tempFile.exists(), is(false));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDownloadWithWrongPasswordViaDigestAuth() throws IOException {
+        AuthenticationInfoProvider infoProvider = new ConstInfoProvider(EXPECTED_USER, WRONG_PASSWORD);
         @Cleanup
         Server server = runServer(10003, new DigestRequestHandler());
 
         File tempFile = File.createTempFile("HttpDownloaderTest", ".txt");
         tempFile.delete();
 
-        mockedSystemIn.provideText(EXPECTED_USER + "\n" + WRONG_PASSWORD + "\n");
-        new HttpDownloader().download(server.getUri(), tempFile);
+        new HttpDownloader(infoProvider).download(server.getUri(), tempFile);
 
         assertThat(tempFile.exists(), is(false));
     }
@@ -159,6 +154,7 @@ public class HttpDownloaderTest {
             if (new String(userAndPass, Charsets.UTF_8).equals(EXPECTED_USER + ":" + EXPECTED_PASSWORD)) {
                 response.setStatusCode(HttpStatus.SC_OK);
             } else {
+                response.setHeader(new BasicHeader("WWW-Authenticate", "Basic realm=\"" + REALM + "\""));
                 response.setStatusCode(HttpStatus.SC_UNAUTHORIZED);
             }
         }
@@ -186,6 +182,7 @@ public class HttpDownloaderTest {
             if (encodedUserAndPass.hashCode() == -2062858579) { // it is troublesome to emulate encoding algorithm at here, we just check hashCode instead.
                 response.setStatusCode(HttpStatus.SC_OK);
             } else {
+                response.setHeader(new BasicHeader("WWW-Authenticate", "Digest realm=\"" + REALM + "\", nonce=\"" + NONCE + "\""));
                 response.setStatusCode(HttpStatus.SC_UNAUTHORIZED);
             }
         }
@@ -207,11 +204,17 @@ public class HttpDownloaderTest {
                 @Cleanup ServerSocket serverSocket = new ServerSocket(port, 10, InetAddress.getLocalHost());
                 log.info("Server is listening on: {}", serverSocket.getInetAddress().toString());
                 DefaultBHttpServerConnectionFactory connectionFactory = DefaultBHttpServerConnectionFactory.INSTANCE;
+
                 while (running.get() && !Thread.interrupted()) {
-                    Socket socket = serverSocket.accept();
-                    HttpServerConnection connection = connectionFactory.createConnection(socket);
-                    HttpContext context = new BasicHttpContext(null);
-                    service.handleRequest(connection, context);
+                    Closer closer = Closer.create();
+                    try {
+                        Socket socket = closer.register(serverSocket.accept());
+                        HttpServerConnection connection = closer.register(connectionFactory.createConnection(socket));
+                        HttpContext context = new BasicHttpContext(null);
+                        service.handleRequest(connection, context);
+                    } finally {
+                        closer.close();
+                    }
                 }
             } catch (IOException | HttpException e) {
                 throw new RuntimeException(e);

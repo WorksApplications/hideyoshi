@@ -27,8 +27,8 @@ public abstract class Downloader {
 
     public abstract void download(URI from, File to) throws IOException;
 
-    public static Downloader createFor(URI uri) {
-        HttpDownloader http = new HttpDownloader();
+    public static Downloader createFor(URI uri, AuthenticationInfoProvider infoProvider) {
+        HttpDownloader http = new HttpDownloader(infoProvider);
         if (http.accept(uri.getScheme())) {
             return http;
         }
@@ -36,9 +36,9 @@ public abstract class Downloader {
         return new StandardDownloader();
     }
 
-    public static Downloader createFor(URL url) {
+    public static Downloader createFor(URL url, AuthenticationInfoProvider infoProvider) {
         try {
-            return createFor(url.toURI());
+            return createFor(url.toURI(), infoProvider);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
