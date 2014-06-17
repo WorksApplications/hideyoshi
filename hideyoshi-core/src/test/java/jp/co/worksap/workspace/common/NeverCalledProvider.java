@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import jp.co.worksap.workspace.common.download.AuthenticationInfoProvider;
 
-final class NeverCalledProvider implements AuthenticationInfoProvider {
+public final class NeverCalledProvider implements AuthenticationInfoProvider {
 
     @Override
     public String loadUserName() throws IOException {

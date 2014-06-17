@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import jp.co.worksap.workspace.common.NeverCalledProvider;
 import jp.co.worksap.workspace.common.OperatingSystem;
 
 import org.junit.Before;
@@ -44,7 +45,7 @@ public class DB2InstallerTest {
         List<Database> databases = ImmutableList.of(database1, database2);
         DB2Configuration db2Configuration = new DB2Configuration(USER_NAME, PASSWORD, installer.toURI().toString(), nodes, databases);
         DB2Installer db2Installer = new DB2Installer();
-        db2Installer.install(db2Configuration);
+        db2Installer.install(db2Configuration, new NeverCalledProvider());
 
         // TODO assert that db2cmd.exe is in PATH
         assertTrue(db2Installer.nodeExists(node));

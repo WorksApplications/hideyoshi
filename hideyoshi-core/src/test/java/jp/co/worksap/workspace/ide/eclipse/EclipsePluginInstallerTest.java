@@ -12,8 +12,9 @@ import java.net.URI;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import jp.co.worksap.workspace.common.DownloadFile;
+import jp.co.worksap.workspace.common.NeverCalledProvider;
 import jp.co.worksap.workspace.common.OperatingSystem;
+import jp.co.worksap.workspace.common.download.Downloader;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -46,7 +47,8 @@ public class EclipsePluginInstallerTest {
 
         Version keplerSr1 = Version.fromString("4.3.1");
         String urlToDownload = new DownloadUrlFinder().findDownloadUrl(keplerSr1);
-        new DownloadFile().download(URI.create(urlToDownload).toURL(), installer);
+        Downloader downloader = Downloader.createFor(URI.create(urlToDownload).toURL(), new NeverCalledProvider());
+        downloader.download(URI.create(urlToDownload).toURL(), installer);
     }
 
     @Test
@@ -64,7 +66,7 @@ public class EclipsePluginInstallerTest {
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
-        File eclipseDir = eclipseInstaller.install(configuration, targetDir);
+        File eclipseDir = eclipseInstaller.install(configuration, targetDir, new NeverCalledProvider());
         assertThatCdtHasBeenInstalled(eclipseDir, false);
 
         EclipsePluginInstaller pluginInstaller = new EclipsePluginInstaller();
