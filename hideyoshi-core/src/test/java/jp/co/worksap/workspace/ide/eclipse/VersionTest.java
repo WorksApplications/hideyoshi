@@ -16,7 +16,7 @@ public class VersionTest {
     @Test
     public void testFromString() {
         assertThat(Version.fromString("1.0.0"), is(new Version(1, 0, 0)));
-        assertThat(Version.fromString("kepler"), is(new Version(4, 3, 1)));
+        assertThat(Version.fromString("kepler"), is(new Version(4, 3, 2)));
     }
 
     @Test

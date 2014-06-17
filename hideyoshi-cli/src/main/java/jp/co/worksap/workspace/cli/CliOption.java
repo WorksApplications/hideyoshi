@@ -36,6 +36,12 @@ public class CliOption {
     @Option(name = "-f", aliases = "--file", metaVar = "config.json", usage = "specify configruation file")
     private File configurationFile = new File(DEFAULT_CONFIG_FILE);
 
+    @Getter
+    @Setter
+    @Nullable
+    @Option(name = "-t", aliases = "--target-location", metaVar = "path/to/workspace", usage = "specify path of directory to set up workspace")
+    private File targetLocation;
+
     @Nonnull
     public Optional<File> getLogFile() {
         return Optional.fromNullable(logFile);

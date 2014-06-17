@@ -19,15 +19,8 @@ import jp.co.worksap.workspace.repository.git.GitInitializer;
 import jp.co.worksap.workspace.repository.git.GitRepositoryConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstallConfiguration;
 import jp.co.worksap.workspace.wasinstall.WASInstaller;
-import jp.co.worksap.workspace.wasprofile.CommonDSConfiguration;
-import jp.co.worksap.workspace.wasprofile.CommonWASConfiguration;
-import jp.co.worksap.workspace.wasprofile.CreateProfileConfiguration;
-import jp.co.worksap.workspace.wasprofile.DataSourcesConfigurationContainer;
-import jp.co.worksap.workspace.wasprofile.GlobalSecurityConfigurationContainer;
-import jp.co.worksap.workspace.wasprofile.JDBCProviderConfiguration;
-import jp.co.worksap.workspace.wasprofile.JVMHeapSizeConfiguration;
-import jp.co.worksap.workspace.wasprofile.SharedLibraryConfiguration;
-import jp.co.worksap.workspace.wasprofile.WebSphereConfiguration;
+import jp.co.worksap.workspace.wasprofile.WebSphereProfileConfiguration;
+import jp.co.worksap.workspace.wasprofile.WebSphereProfileCreator;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.base.Optional;
@@ -41,17 +34,17 @@ final class Provisioner {
     private final LombokInstaller lombokInstaller;
     private final DB2Installer db2Installer;
     private final WASInstaller wasInstaller;
-    private final WebSphereConfiguration wasConfigure;
+    private final WebSphereProfileCreator wasProfileCreator;
     private final GitInitializer gitInitializer;
 
-    Provisioner(PackageManagementFacade packageManagerFacade, EclipseInstaller eclipseInstaller, EclipsePluginInstaller eclipsePluginInstaller, LombokInstaller lombokInstaller, DB2Installer db2Installer, WASInstaller wasInstaller, WebSphereConfiguration wasConfigure, GitInitializer gitInitializer) {
+    Provisioner(PackageManagementFacade packageManagerFacade, EclipseInstaller eclipseInstaller, EclipsePluginInstaller eclipsePluginInstaller, LombokInstaller lombokInstaller, DB2Installer db2Installer, WASInstaller wasInstaller, WebSphereProfileCreator wasProfileCreator, GitInitializer gitInitializer) {
         this.packageManagerFacade = checkNotNull(packageManagerFacade);
         this.eclipseInstaller = checkNotNull(eclipseInstaller);
         this.eclipsePluginInstaller = checkNotNull(eclipsePluginInstaller);
         this.lombokInstaller = checkNotNull(lombokInstaller);
         this.db2Installer = checkNotNull(db2Installer);
         this.wasInstaller = checkNotNull(wasInstaller);
-        this.wasConfigure = checkNotNull(wasConfigure);
+        this.wasProfileCreator = checkNotNull(wasProfileCreator);
         this.gitInitializer = checkNotNull(gitInitializer);
     }
 
@@ -81,7 +74,7 @@ final class Provisioner {
         if (repository == null || repository.isEmpty()) {
             log.info("no Git repository is specified");
         } else {
-            gitInitializer.initialize(repository, configuration.getGitHook());
+            gitInitializer.initialize(configuration.getTargetLocation(), repository, configuration.getGitHook());
         }
     }
 
@@ -102,9 +95,9 @@ final class Provisioner {
     }
 
     private void installPackages(Configuration configuration) {
-        Iterable<Package> targetPackages = configuration.getTargetPackages();
-        if (targetPackages != null && !Iterables.isEmpty(targetPackages)) {
-            packageManagerFacade.install(targetPackages);
+        Iterable<Package> targetPackage = configuration.getTargetPackage();
+        if (targetPackage != null && !Iterables.isEmpty(targetPackage)) {
+            packageManagerFacade.install(targetPackage);
         } else {
             log.info("no package is required");
         }
@@ -119,19 +112,11 @@ final class Provisioner {
         }
     }
     
-    public void configureWebsphere(Configuration configuration) throws IOException{        
-        CreateProfileConfiguration wasProfile = configuration.getWasProfileConfig();
-        CommonWASConfiguration commonWASConfig = configuration.getWasCommonConfig();
-        SharedLibraryConfiguration slConfig = configuration.getSharedLibraryConfig();
-        JDBCProviderConfiguration jdbcConfig = configuration.getJdbcProviderConfig();
-        GlobalSecurityConfigurationContainer gsConfig = configuration.getGlobalSecurityConfig();
-        CommonDSConfiguration commonDSConfig = configuration.getDataSourcesCommonConfig();
-        DataSourcesConfigurationContainer dsConfig = configuration.getDataSourcesConfig();
-        JVMHeapSizeConfiguration jvmConfig = configuration.getJvmHeapSizeConfig();     
-        if (wasProfile!=null && slConfig!=null && jdbcConfig!=null && gsConfig!=null && dsConfig!=null && jvmConfig!=null) {            
-            wasConfigure.createAndConfigureProfile(commonWASConfig, wasProfile, slConfig, jdbcConfig, gsConfig, commonDSConfig, dsConfig, jvmConfig);            
-        }
-        else {
+    public void configureWebsphere(Configuration configuration) throws IOException {
+        WebSphereProfileConfiguration wasProfileConfiguration = configuration.getWasProfile();
+        if (wasProfileConfiguration != null) {
+            wasProfileCreator.createAndConfigureProfile(wasProfileConfiguration);
+        } else {
             log.info("no WebSphere Configuration is required");
         } 
     }

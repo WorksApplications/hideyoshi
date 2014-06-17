@@ -24,27 +24,38 @@ public class ConfigurationLoaderTest {
     @Test
     public void testEmptyConfiguration() throws IOException {
         File file = folder.newFile();
-        Files.write("{\"targetPackages\": []}", file, Charsets.UTF_8);
-        Configuration config = new ConfigurationLoader().loadFrom(file);
+        Files.write("{\"targetPackage\": []}", file, Charsets.UTF_8);
+        Configuration config = new ConfigurationLoader().loadFrom(file, null);
 
-        assertThat(config.getTargetPackages(), is(empty()));
+        assertThat(config.getTargetPackage(), is(empty()));
     }
 
     @Test
     public void testWithOneTargetPackage() throws IOException {
         File file = folder.newFile();
-        Files.write("{\"targetPackages\": [{\"name\":\"wget\"}]}", file, Charsets.UTF_8);
-        Configuration config = new ConfigurationLoader().loadFrom(file);
+        Files.write("{\"targetPackage\": [{\"name\":\"wget\"}]}", file, Charsets.UTF_8);
+        Configuration config = new ConfigurationLoader().loadFrom(file, null);
 
-        assertThat(config.getTargetPackages(), contains(Package.of("wget")));
+        assertThat(config.getTargetPackage(), contains(Package.of("wget")));
     }
 
     @Test
     public void testHoconFormat() throws IOException {
         File file = folder.newFile();
-        Files.write("targetPackages: [{name:wget}]", file, Charsets.UTF_8);
-        Configuration config = new ConfigurationLoader().loadFrom(file);
+        Files.write("targetPackage: [{name:wget}]", file, Charsets.UTF_8);
+        Configuration config = new ConfigurationLoader().loadFrom(file, null);
 
-        assertThat(config.getTargetPackages(), contains(Package.of("wget")));
+        assertThat(config.getTargetPackage(), contains(Package.of("wget")));
+    }
+
+    @Test
+    public void testWebSphereProfile() throws IOException {
+        File file = folder.newFile();
+        Files.write("wasProfile: {cellName: \"cell-name\", dataSource: [{databaseName: database-name}]}", file, Charsets.UTF_8);
+        Configuration config = new ConfigurationLoader().loadFrom(file, null);
+
+        assertThat(config.getWasProfile().getCellName(), is("cell-name"));
+        assertThat(config.getWasProfile().getDataSource().size(), is(1));
+        assertThat(config.getWasProfile().getDataSource().get(0).getDatabaseName(), is("database-name"));
     }
 }

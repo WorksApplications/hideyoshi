@@ -1,6 +1,7 @@
 # ideal workspace initialization
 
 [![Build Status](https://travis-ci.org/WorksApplications/hideyoshi.png)](https://travis-ci.org/WorksApplications/hideyoshi)
+[![Coverage Status](https://coveralls.io/repos/WorksApplications/hideyoshi/badge.png?branch=master)](https://coveralls.io/r/WorksApplications/hideyoshi?branch=master)
 
 ## how to build
 

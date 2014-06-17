@@ -67,7 +67,7 @@ public class LombokInstaller {
 
         URL downloadUrl = lombok.getUrlToDownload();
         File localCopy = new File(location, COPIED_FILE_NAME);
-        Resources.copy(downloadUrl, Files.newOutputStreamSupplier(localCopy).getOutput());
+        Resources.copy(downloadUrl, Files.asByteSink(localCopy).openStream());
         return localCopy;
     }
 

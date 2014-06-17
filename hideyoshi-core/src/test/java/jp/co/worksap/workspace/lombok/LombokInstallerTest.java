@@ -15,10 +15,8 @@ import jp.co.worksap.workspace.common.OperatingSystem;
 import jp.co.worksap.workspace.ide.eclipse.EclipseConfiguration;
 import jp.co.worksap.workspace.ide.eclipse.EclipseInstaller;
 import jp.co.worksap.workspace.ide.eclipse.Version;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
 
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -52,15 +50,21 @@ public class LombokInstallerTest {
      * @see https://github.com/rzwitserloot/lombok/blob/45f9e9def12b8f32b76c86471487e735ebb7c09b/src/installer/lombok/installer/eclipse/EclipseLocationProvider.java
      */
     @Before
-    public void makeZipFile() throws ZipException, IOException {
-        ZipFile zipFile = new ZipFile(new File(ZIP_FILE_PATH));
-        zipFile.getFile().delete();
+    public void makeZipFile() throws IOException {
+        ZipArchiver archiver = new ZipArchiver();
+        archiver.setDestFile(new File(ZIP_FILE_PATH));
+        archiver.getDestFile().delete();
+
         File eclipseDir = folder.newFolder("eclipse");
         File iniFile = new File(eclipseDir, "eclipse.ini");
         File exeFile = new File(eclipseDir, "eclipse.exe");
         Files.touch(iniFile);
         Files.touch(exeFile);
-        zipFile.addFolder(eclipseDir , new ZipParameters());
+
+        archiver.addDirectory(eclipseDir);
+        archiver.addFile(iniFile, "eclipse/eclipse.ini");
+        archiver.addFile(exeFile, "eclipse/eclipse.exe");
+        archiver.createArchive();
     }
 
     @Test
@@ -98,7 +102,7 @@ public class LombokInstallerTest {
         Version juno = Version.fromString("juno");
         downloadFrom.put(OperatingSystem.create(), ZIP_FILE_PATH);
 
-        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom);
+        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null);
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();

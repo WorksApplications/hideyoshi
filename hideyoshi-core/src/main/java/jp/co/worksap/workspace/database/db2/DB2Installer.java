@@ -15,9 +15,8 @@ import jp.co.worksap.workspace.common.DownloadFile;
 import jp.co.worksap.workspace.common.OperatingSystem;
 import jp.co.worksap.workspace.common.PathWalker;
 import jp.co.worksap.workspace.common.PipingDaemon;
+import jp.co.worksap.workspace.common.UnArchiver;
 import lombok.extern.slf4j.Slf4j;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
@@ -62,10 +61,7 @@ public class DB2Installer {
     private void unpack(File downloadedFile) {
         try {
             log.info("Unpacking installer...");
-            ZipFile zipped = new ZipFile(downloadedFile);
-            zipped.extractAll(downloadedFile.getParent());
-        } catch (ZipException e) {
-            throw new IllegalStateException(e);
+            new UnArchiver().extract(downloadedFile, downloadedFile.getParentFile());
         } finally {
             log.info("Unpacking completed...");
         }
@@ -76,7 +72,7 @@ public class DB2Installer {
             // TODO OS Dependent
             String setupPath = location.getAbsolutePath() + "/WSER/image/setup.exe";
             File rspFile = File.createTempFile("db2Config", ".rsp");
-            Resources.copy(DB2Installer.class.getResource("db2.rsp"), Files.newOutputStreamSupplier(rspFile).getOutput());
+            Resources.copy(DB2Installer.class.getResource("db2.rsp"), Files.asByteSink(rspFile).openStream());
 
             FileWriter rspFileWriter = new FileWriter(rspFile, true);
             rspFileWriter.write("\nDB2.USERNAME=" + configuration.getUsername());

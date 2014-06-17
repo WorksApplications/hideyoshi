@@ -19,11 +19,11 @@ import com.google.common.annotations.VisibleForTesting;
 @Slf4j
 @ParametersAreNonnullByDefault
 public class GitInitializer {
-    public void initialize(Map<String, GitRepositoryConfiguration> repositories, Map<String, GitHookConfiguration> hooks) {
+    public void initialize(File targetLocation, Map<String, GitRepositoryConfiguration> repositories, Map<String, GitHookConfiguration> hooks) {
         for (Map.Entry<String, GitRepositoryConfiguration> repository : repositories.entrySet()) {
             GitHookConfiguration hook = findHookFor(repository.getValue(), hooks);
             String repositoryName = repository.getKey();
-            File directory = new File(repositoryName);
+            File directory = new File(targetLocation, repositoryName);
             if (!directory.mkdir()) {
                 throw new IllegalArgumentException("Cannot create directory. Verify that repository name is valid as file name:" + repositoryName);
             }

@@ -15,10 +15,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import jp.co.worksap.workspace.common.OperatingSystem;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
 
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,15 +35,21 @@ public class EclipseInstallerTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Before
-    public void makeZipFile() throws ZipException, IOException {
-        ZipFile zipFile = new ZipFile(new File(ZIP_FILE_PATH));
-        zipFile.getFile().delete();
+    public void makeZipFile() throws IOException {
+        ZipArchiver archiver = new ZipArchiver();
+        archiver.setDestFile(new File(ZIP_FILE_PATH));
+        archiver.getDestFile().delete();
+
         File eclipseDir = folder.newFolder("eclipse");
         File iniFile = new File(eclipseDir, "eclipse.ini");
         File exeFile = new File(eclipseDir, "eclipse.exe");
         Files.touch(iniFile);
         Files.touch(exeFile);
-        zipFile.addFolder(eclipseDir , new ZipParameters());
+
+        archiver.addDirectory(eclipseDir);
+        archiver.addFile(iniFile, "eclipse/eclipse.ini");
+        archiver.addFile(exeFile, "eclipse/eclipse.exe");
+        archiver.createArchive();
     }
 
     @Test
@@ -54,7 +58,7 @@ public class EclipseInstallerTest {
         Version juno = Version.fromString("juno");
         downloadFrom.put(OperatingSystem.create(), ZIP_FILE_PATH);
 
-        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom);
+        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null);
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
@@ -72,7 +76,7 @@ public class EclipseInstallerTest {
         downloadFrom.put(OperatingSystem.create(), ZIP_FILE_PATH);
         String simplePath = simplePathOf(ZIP_FILE_PATH);
 
-        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom);
+        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null);
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
         assertThat(eclipseInstaller.findDownloadUrl(configuration), is(new File(simplePath).toURI().toURL().toString()));
     }
@@ -86,7 +90,7 @@ public class EclipseInstallerTest {
         EclipseConfiguration configuration = new EclipseConfiguration(juno, null,
                 Lists.newArrayList(EclipsePlugin.of("egit")),
                 Lists.newArrayList("http://download.eclipse.org/egit/updates/"),
-                downloadFrom);
+                downloadFrom, null);
         File targetDir = folder.newFolder();
 
         // generate directory: installer should find it and skip installation

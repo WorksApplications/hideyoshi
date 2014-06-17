@@ -5,6 +5,8 @@ jdk:
   - openjdk7
   - oraclejdk7
 script: "mvn clean install -P on-travis"
+after_success:
+  - mvn clean test cobertura:cobertura coveralls:cobertura -P on-travis
 notifications:
   email:
     recipients:

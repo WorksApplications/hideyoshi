@@ -12,9 +12,8 @@ import java.util.List;
 import jp.co.worksap.workspace.common.DownloadFile;
 import jp.co.worksap.workspace.common.OperatingSystem;
 import jp.co.worksap.workspace.common.PipingDaemon;
+import jp.co.worksap.workspace.common.UnArchiver;
 import lombok.extern.slf4j.Slf4j;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
@@ -68,10 +67,7 @@ public class WASInstaller {
     private void unpack(File downloadedFile) {
         try {
             log.info("Starting unpacking...");
-            ZipFile zipped = new ZipFile(downloadedFile);
-            zipped.extractAll(downloadedFile.getParent());
-        } catch (ZipException e) {
-            throw new IllegalStateException(e);
+            new UnArchiver().extract(downloadedFile, downloadedFile.getParentFile());
         } finally {
             log.info("Unpacking completed...");
         }
@@ -82,7 +78,7 @@ public class WASInstaller {
             OperatingSystem os = OperatingSystem.create();
             String setupPath = location.getAbsolutePath() + "/" + product + "/" + os.appendExtensionTo("install");
             File rspFile = File.createTempFile(product, ".rsp");
-            Resources.copy(WASInstaller.class.getResource(product + ".rsp"), Files.newOutputStreamSupplier(rspFile).getOutput());
+            Resources.copy(WASInstaller.class.getResource(product + ".rsp"), Files.asByteSink(rspFile).openStream());
 
             FileWriter rspFileWriter = new FileWriter(rspFile, true);
             rspFileWriter.write("\n-OPT installLocation=\"" + configuration.getInstallLocation() + "\\");

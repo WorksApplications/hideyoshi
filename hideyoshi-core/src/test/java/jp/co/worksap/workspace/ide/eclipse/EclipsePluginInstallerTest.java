@@ -14,9 +14,6 @@ import java.util.regex.Pattern;
 
 import jp.co.worksap.workspace.common.DownloadFile;
 import jp.co.worksap.workspace.common.OperatingSystem;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,21 +26,10 @@ import com.google.common.io.PatternFilenameFilter;
 
 public class EclipsePluginInstallerTest {
     private static final String INSTALLER_NAME = "eclipse-jee-kepler-SR1-win32-x86_64.zip";
-    private static final String ZIP_FILE_PATH = "./target/empty.zip";
     private static final Pattern CDT_DIR_NAME = Pattern.compile("^org\\.eclipse\\.cdt_.*");
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-
-    @Before
-    public void makeZipFile() throws ZipException, IOException {
-        ZipFile zipFile = new ZipFile(new File(ZIP_FILE_PATH));
-        zipFile.getFile().delete();
-        File iniFile = folder.newFile("eclipse.ini");
-        File exeFile = folder.newFile("eclipse.exe");
-        zipFile.addFile(iniFile, new ZipParameters());
-        zipFile.addFile(exeFile, new ZipParameters());
-    }
 
     @Before
     public void ensureWindows64bit() {
@@ -74,7 +60,7 @@ public class EclipsePluginInstallerTest {
         EclipseConfiguration configuration = new EclipseConfiguration(juno, null,
                 Lists.newArrayList(EclipsePlugin.of("org.eclipse.cdt.feature.group", "8.2.1.201309180223")),
                 Lists.newArrayList("http://download.eclipse.org/tools/cdt/releases/kepler"),
-                downloadFrom);
+                downloadFrom, null);
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
