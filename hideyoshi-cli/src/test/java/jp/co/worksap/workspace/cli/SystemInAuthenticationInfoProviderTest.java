@@ -1,5 +1,6 @@
 package jp.co.worksap.workspace.cli;
 
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
@@ -23,12 +24,14 @@ public class SystemInAuthenticationInfoProviderTest {
         SystemInAuthenticationInfoProvider infoProvider = new SystemInAuthenticationInfoProvider();
 
         assertThat(infoProvider.loadUserName(), is("username"));
-        assertThat(mockedSystemOut.getLog(), is("User name:\r\n"));
+        assertThat(mockedSystemOut.getLog(),
+                anyOf(is("User name:\r\n"), is("User name:\n")));
 
         mockedSystemOut.clear();
 
         assertThat(infoProvider.loadPassword(), is("password"));
-        assertThat(mockedSystemOut.getLog(), is("Password:\r\n"));
+        assertThat(mockedSystemOut.getLog(),
+                anyOf(is("Password:\r\n"), is("Password:\n")));
     }
 
 }
