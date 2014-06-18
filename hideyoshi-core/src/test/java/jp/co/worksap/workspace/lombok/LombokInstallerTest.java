@@ -10,8 +10,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import jp.co.worksap.workspace.common.DownloadFile;
+import jp.co.worksap.workspace.common.NeverCalledProvider;
 import jp.co.worksap.workspace.common.OperatingSystem;
+import jp.co.worksap.workspace.common.download.Downloader;
 import jp.co.worksap.workspace.ide.eclipse.EclipseConfiguration;
 import jp.co.worksap.workspace.ide.eclipse.EclipseInstaller;
 import jp.co.worksap.workspace.ide.eclipse.Version;
@@ -42,7 +43,8 @@ public class LombokInstallerTest {
         }
 
         URL url = LombokConfiguration.fromString("1.12.4").getUrlToDownload();
-        new DownloadFile().download(url, jarFile);
+        Downloader downloader = Downloader.createFor(url, new NeverCalledProvider());
+        downloader.download(url, jarFile);
     }
 
     /**
@@ -106,6 +108,6 @@ public class LombokInstallerTest {
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
-        return eclipseInstaller.install(configuration, targetDir);
+        return eclipseInstaller.install(configuration, targetDir, new NeverCalledProvider());
     }
 }

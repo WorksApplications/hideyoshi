@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import jp.co.worksap.workspace.common.NeverCalledProvider;
 import jp.co.worksap.workspace.common.OperatingSystem;
 
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
@@ -62,7 +63,7 @@ public class EclipseInstallerTest {
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
-        File eclipseDir = eclipseInstaller.install(configuration, targetDir);
+        File eclipseDir = eclipseInstaller.install(configuration, targetDir, new NeverCalledProvider());
         assertThat(eclipseDir, is(not(equalTo(targetDir))));
         assertThat(eclipseDir, is(equalTo(new File(targetDir, "eclipse"))));
         assertTrue(new File(eclipseDir, "eclipse.ini").exists());
@@ -97,7 +98,7 @@ public class EclipseInstallerTest {
         new File(targetDir, "eclipse").mkdir();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
-        eclipseInstaller.install(configuration, targetDir);
+        eclipseInstaller.install(configuration, targetDir, new NeverCalledProvider());
         assertFalse(new File(targetDir, "eclipse.ini").exists());
     }
 

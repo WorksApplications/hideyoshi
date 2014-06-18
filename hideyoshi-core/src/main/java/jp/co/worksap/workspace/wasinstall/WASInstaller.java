@@ -9,10 +9,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.co.worksap.workspace.common.DownloadFile;
 import jp.co.worksap.workspace.common.OperatingSystem;
 import jp.co.worksap.workspace.common.PipingDaemon;
 import jp.co.worksap.workspace.common.UnArchiver;
+import jp.co.worksap.workspace.common.download.AuthenticationInfoProvider;
+import jp.co.worksap.workspace.common.download.Downloader;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.io.Files;
@@ -20,13 +21,14 @@ import com.google.common.io.Resources;
 
 @Slf4j
 public class WASInstaller {
-    public void install(WASInstallConfiguration configuration) {
+    public void install(WASInstallConfiguration configuration, AuthenticationInfoProvider infoProvider) {
         // TODO check if already exists and if yes than do I install update
         // packages?
         try {
             URL downloadUrl = configuration.getUrlToDownload();
             File downloadedFile = File.createTempFile("was", ".download");
-            DownloadFile downloader = new DownloadFile();
+            Downloader downloader = Downloader.createFor(downloadUrl, infoProvider);
+            downloader.download(downloadUrl, downloadedFile);
 
             // downloading and installing WAS
             if (wasExists(configuration)) {

@@ -11,11 +11,12 @@ import java.util.List;
 
 import javax.annotation.CheckReturnValue;
 
-import jp.co.worksap.workspace.common.DownloadFile;
 import jp.co.worksap.workspace.common.OperatingSystem;
 import jp.co.worksap.workspace.common.PathWalker;
 import jp.co.worksap.workspace.common.PipingDaemon;
 import jp.co.worksap.workspace.common.UnArchiver;
+import jp.co.worksap.workspace.common.download.AuthenticationInfoProvider;
+import jp.co.worksap.workspace.common.download.Downloader;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -43,12 +44,13 @@ public class DB2Installer {
         }
     }
 
-    public void install(DB2Configuration configuration) {
+    public void install(DB2Configuration configuration, AuthenticationInfoProvider infoProvider) {
         try {
             if (!db2cmd.exists()) {
                 URL downloadUrl = configuration.getUrlToDownload();
                 File downloadedFile = File.createTempFile("db2", ".download");
-                new DownloadFile().download(downloadUrl, downloadedFile);
+                Downloader downloader = Downloader.createFor(downloadUrl, infoProvider);
+                downloader.download(downloadUrl, downloadedFile);
                 unpack(downloadedFile);
                 setup(configuration, downloadedFile.getParentFile());
             }

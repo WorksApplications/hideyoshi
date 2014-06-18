@@ -42,6 +42,6 @@ public class Main {
         new LogConfigurator().configureLogger(bean);
         Configuration configuration = new ConfigurationLoader().loadFrom(bean.getConfigurationFile(), bean.getTargetLocation());
 
-        return new Provisioner(new PackageManagementFacade(), new EclipseInstaller(), new EclipsePluginInstaller(), new LombokInstaller(), new DB2Installer(), new WASInstaller(), new WebSphereProfileCreator(), new GitInitializer()).execute(configuration);
+        return new Provisioner(new PackageManagementFacade(), new EclipseInstaller(), new EclipsePluginInstaller(), new LombokInstaller(), new DB2Installer(), new WASInstaller(), new WebSphereProfileCreator(), new GitInitializer()).execute(configuration, new SystemInAuthenticationInfoProvider());
     }
 }

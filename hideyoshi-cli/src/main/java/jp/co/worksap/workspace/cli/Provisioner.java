@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import jp.co.worksap.workspace.common.download.AuthenticationInfoProvider;
 import jp.co.worksap.workspace.database.db2.DB2Configuration;
 import jp.co.worksap.workspace.database.db2.DB2Installer;
 import jp.co.worksap.workspace.ide.eclipse.EclipseConfiguration;
@@ -48,7 +49,7 @@ final class Provisioner {
         this.gitInitializer = checkNotNull(gitInitializer);
     }
 
-    StatusCode execute(Configuration configuration) throws IOException {
+    StatusCode execute(Configuration configuration, AuthenticationInfoProvider infoProvider) throws IOException {
         File targetLocation = configuration.getTargetLocation();
         if (!targetLocation.isDirectory()) {
             log.error("targetLocation should be existed directory: " + targetLocation.getAbsolutePath());
@@ -57,9 +58,9 @@ final class Provisioner {
 
         try {
             installPackages(configuration);
-            installEclipseAndPlugin(configuration, targetLocation);
-            installDB2(configuration);
-            installWAS(configuration);
+            installEclipseAndPlugin(configuration, targetLocation, infoProvider);
+            installDB2(configuration, infoProvider);
+            installWAS(configuration, infoProvider);
             configureWebsphere(configuration);
             cloneRepository(configuration);
             return StatusCode.NORMAL;
@@ -78,10 +79,10 @@ final class Provisioner {
         }
     }
 
-    private void installEclipseAndPlugin(Configuration configuration, File targetLocation) {
+    private void installEclipseAndPlugin(Configuration configuration, File targetLocation, AuthenticationInfoProvider infoProvider) {
         EclipseConfiguration eclipseConfiguration = configuration.getEclipse();
         if (eclipseConfiguration != null) {
-            File eclipseDir = eclipseInstaller.install(eclipseConfiguration, targetLocation);
+            File eclipseDir = eclipseInstaller.install(eclipseConfiguration, targetLocation, infoProvider);
             eclipsePluginInstaller.install(eclipseConfiguration, eclipseDir);
             LombokConfiguration lombok = configuration.getLombok();
             if (configuration.getLombok() != null) {
@@ -103,10 +104,10 @@ final class Provisioner {
         }
     }
 
-    private void installDB2(Configuration configuration) {
+    private void installDB2(Configuration configuration, AuthenticationInfoProvider infoProvider) {
         DB2Configuration db2Configuration = configuration.getDb2();
         if (db2Configuration != null) {
-            db2Installer.install(db2Configuration);
+            db2Installer.install(db2Configuration, infoProvider);
         } else {
             log.info("no DB2 is required");
         }
@@ -122,10 +123,10 @@ final class Provisioner {
     }
 
 
-    private void installWAS(Configuration configuration) {
+    private void installWAS(Configuration configuration, AuthenticationInfoProvider infoProvider) {
         WASInstallConfiguration wasInstallConfiguration = configuration.getWasInstall();
         if (wasInstallConfiguration != null) {
-            wasInstaller.install(wasInstallConfiguration);
+            wasInstaller.install(wasInstallConfiguration, infoProvider);
         } else {
             log.info("no DB2 is required");
         }

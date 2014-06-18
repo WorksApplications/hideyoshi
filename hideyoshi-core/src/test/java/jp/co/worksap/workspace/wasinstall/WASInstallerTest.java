@@ -6,6 +6,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.co.worksap.workspace.common.NeverCalledProvider;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,6 +40,6 @@ public class WASInstallerTest {
         // TODO use temp directory to install
         WASInstallConfiguration configuration = new WASInstallConfiguration("C:\\Program Files\\IBM\\WebSphere", installer.toURI().toString(), updateInstaller.toURI().toString(), packages);
         WASInstaller wasInstaller = new WASInstaller();
-        wasInstaller.install(configuration);
+        wasInstaller.install(configuration, new NeverCalledProvider());
     }
 }
