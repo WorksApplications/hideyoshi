@@ -1,6 +1,7 @@
 package jp.co.worksap.workspace.cli;
 
 import java.io.File;
+import java.net.URI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -13,7 +14,7 @@ import org.kohsuke.args4j.Option;
 import com.google.common.base.Optional;
 
 public class CliOption {
-    private static final String DEFAULT_CONFIG_FILE = "project.json";
+    private static final String DEFAULT_CONFIG_FILE = "./project.json";
 
     @Getter
     @Setter
@@ -33,8 +34,8 @@ public class CliOption {
     @Getter
     @Setter
     @Nullable
-    @Option(name = "-f", aliases = "--file", metaVar = "config.json", usage = "specify configruation file")
-    private File configurationFile = new File(DEFAULT_CONFIG_FILE);
+    @Option(name = "-f", aliases = "--file", metaVar = "config.json", usage = "specify configuration file")
+    private URI configurationFile = URI.create(DEFAULT_CONFIG_FILE);
 
     @Getter
     @Setter

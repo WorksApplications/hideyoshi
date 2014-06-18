@@ -2,17 +2,18 @@ package jp.co.worksap.workspace.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import javax.annotation.Nonnull;
 
-
-
+import jp.co.worksap.workspace.common.download.Downloader;
 import lombok.extern.slf4j.Slf4j;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.google.common.io.Files;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigRenderOptions;
@@ -46,6 +47,28 @@ class ConfigurationLoader {
             throw new IllegalStateException(
                     "IOException while loading configuration", e);
         }
+    }
+
+    Configuration loadFrom(@Nonnull URI configurationUri, File targetLocation) throws IOException {
+        configurationUri = changeToAbsolute(configurationUri);
+        Downloader downloader = Downloader.createFor(configurationUri, new SystemInAuthenticationInfoProvider());
+        File configurationFile = File.createTempFile("configuration", Files.getFileExtension(configurationUri.getPath()));
+        downloader.download(configurationUri, configurationFile);
+        return loadFrom(configurationFile, targetLocation);
+    }
+
+    /**
+     * <p>We should ensure that URI is absolute before we call {@code URI#toURL()},
+     * this method will convert relative file path to absolute URI.
+     */
+    @Nonnull
+    private URI changeToAbsolute(URI configurationUri) {
+        if (configurationUri.isAbsolute()) {
+            return configurationUri;
+        }
+
+        File absolutePath = new File(".", configurationUri.toString());
+        return absolutePath.toURI();
     }
 
     /**
