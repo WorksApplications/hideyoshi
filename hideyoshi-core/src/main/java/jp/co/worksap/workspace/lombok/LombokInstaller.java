@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import jp.co.worksap.workspace.common.PipingDaemon;
@@ -59,17 +61,25 @@ public class LombokInstaller {
     private File download(LombokConfiguration lombok, File location, AuthenticationInfoProvider infoProvider)
             throws IOException {
         if (lombok.getDownloadFrom().isPresent()) {
-            URL lombokUrl = lombok.getDownloadFrom().get();
-            Downloader downloader = Downloader.createFor(lombokUrl, infoProvider);
+            URI lombokUri = lombok.getDownloadFrom().get();
+            Downloader downloader = Downloader.createFor(lombokUri, infoProvider);
             File copied = new File(location, COPIED_FILE_NAME);
-            downloader.download(lombokUrl, copied);
+            downloader.download(lombokUri, copied);
             return copied;
         }
 
-        URL downloadUrl = lombok.getUrlToDownload();
+        URI downloadUri = lombok.getUrlToDownload();
         File localCopy = new File(location, COPIED_FILE_NAME);
-        Resources.copy(downloadUrl, Files.asByteSink(localCopy).openStream());
+        Resources.copy(convertToUrl(downloadUri), Files.asByteSink(localCopy).openStream());
         return localCopy;
+    }
+
+    private URL convertToUrl(URI downloadUri) throws MalformedURLException {
+        if (downloadUri.isAbsolute()) {
+            return downloadUri.toURL();
+        } else {
+            return new File(".", downloadUri.toString()).toURI().toURL();
+        }
     }
 
     private void recordStdoutOf(final Process process) throws IOException {
