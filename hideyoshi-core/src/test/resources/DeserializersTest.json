@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "plugin": "org.eclipse.egit.feature.group",
+  "os": {
+    "win.32": "win.32"
+  }
+}
