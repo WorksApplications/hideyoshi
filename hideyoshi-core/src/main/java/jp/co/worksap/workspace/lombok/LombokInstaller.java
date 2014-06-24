@@ -4,11 +4,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 
 import jp.co.worksap.workspace.common.PipingDaemon;
+import jp.co.worksap.workspace.common.UrlCreator;
 import jp.co.worksap.workspace.common.download.AuthenticationInfoProvider;
 import jp.co.worksap.workspace.common.download.Downloader;
 import lombok.extern.slf4j.Slf4j;
@@ -70,16 +69,8 @@ public class LombokInstaller {
 
         URI downloadUri = lombok.getUrlToDownload();
         File localCopy = new File(location, COPIED_FILE_NAME);
-        Resources.copy(convertToUrl(downloadUri), Files.asByteSink(localCopy).openStream());
+        Resources.copy(new UrlCreator().createFrom(downloadUri), Files.asByteSink(localCopy).openStream());
         return localCopy;
-    }
-
-    private URL convertToUrl(URI downloadUri) throws MalformedURLException {
-        if (downloadUri.isAbsolute()) {
-            return downloadUri.toURL();
-        } else {
-            return new File(".", downloadUri.toString()).toURI().toURL();
-        }
     }
 
     private void recordStdoutOf(final Process process) throws IOException {

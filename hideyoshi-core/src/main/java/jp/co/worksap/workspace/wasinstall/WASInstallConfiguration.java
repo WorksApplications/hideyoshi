@@ -1,7 +1,6 @@
 package jp.co.worksap.workspace.wasinstall;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import jp.co.worksap.workspace.common.UrlCreator;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,7 +38,7 @@ public class WASInstallConfiguration {
     @Nonnull
     URL getUrlToDownload() {
         try {
-            return URI.create(downloadURL).toURL();
+            return new UrlCreator().createFrom(downloadURL);
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
@@ -47,7 +47,7 @@ public class WASInstallConfiguration {
     @Nonnull
     URL getUpdateInstallerUrlToDownload() {
         try {
-            return URI.create(updateInstallerDownloadURL).toURL();
+            return new UrlCreator().createFrom(updateInstallerDownloadURL);
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }

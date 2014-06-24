@@ -3,11 +3,13 @@ package jp.co.worksap.workspace.ide.eclipse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 
 import javax.annotation.Nonnull;
 
 import jp.co.worksap.workspace.common.OperatingSystem;
 import jp.co.worksap.workspace.common.UnArchiver;
+import jp.co.worksap.workspace.common.UrlCreator;
 import jp.co.worksap.workspace.common.download.AuthenticationInfoProvider;
 import jp.co.worksap.workspace.common.download.Downloader;
 import lombok.extern.slf4j.Slf4j;
@@ -54,13 +56,8 @@ public class EclipseInstaller {
         if (downloadFrom == null) {
             return new DownloadUrlFinder().findDownloadUrl(version);
         } else {
-            if (downloadFrom.startsWith("./")) {
-                // add file:// to convert relative path to URL
-                String simplePath = Files.simplifyPath(new File(".").getAbsolutePath().replace('\\', '/'));
-                return new File(simplePath, downloadFrom.substring(2)).toURI().toURL().toString();
-            } else {
-                throw new IllegalArgumentException("not supported downloadFrom: " + downloadFrom);
-            }
+            URL url = new UrlCreator().createFrom(downloadFrom);
+            return url.toString();
         }
     }
 }

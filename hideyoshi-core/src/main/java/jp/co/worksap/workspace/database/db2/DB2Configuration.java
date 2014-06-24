@@ -1,13 +1,13 @@
 package jp.co.worksap.workspace.database.db2;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import jp.co.worksap.workspace.common.UrlCreator;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,7 +44,7 @@ public class DB2Configuration {
     @Nonnull
     URL getUrlToDownload() {
         try {
-            return URI.create(downloadURL).toURL();
+            return new UrlCreator().createFrom(downloadURL);
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
