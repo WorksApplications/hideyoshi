@@ -26,7 +26,7 @@ public class LombokConfiguration {
     private String version;
 
     @Nullable
-    private String downloadFrom;
+    private URL downloadFrom;
 
     URL getUrlToDownload() {
         try {
@@ -37,7 +37,7 @@ public class LombokConfiguration {
     }
 
     @Nonnull
-    Optional<String> getDownloadFrom() {
+    Optional<URL> getDownloadFrom() {
         return Optional.fromNullable(downloadFrom);
     }
 

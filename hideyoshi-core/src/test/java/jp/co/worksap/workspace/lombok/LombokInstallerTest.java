@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class LombokInstallerTest {
         File eclipseDir = installEclipse();
 
         LombokConfiguration lombok = LombokConfiguration.fromString("1.12.2");
-        new LombokInstaller().install(Optional.of(lombok), eclipseDir);
+        new LombokInstaller().install(Optional.of(lombok), eclipseDir, new NeverCalledProvider());
 
         List<String> properties = Files.readLines(new File(eclipseDir, "eclipse.ini"), Charsets.UTF_8);
         assertThat(properties,
@@ -88,8 +89,8 @@ public class LombokInstallerTest {
     public void installLombokWithLocalFile() throws IOException {
         File eclipseDir = installEclipse();
 
-        LombokConfiguration lombok = new LombokConfiguration(null, "src/test/resources/lombok-1.12.2.jar");
-        new LombokInstaller().install(Optional.of(lombok), eclipseDir);
+        LombokConfiguration lombok = new LombokConfiguration(null, URI.create("src/test/resources/lombok-1.12.2.jar").toURL());
+        new LombokInstaller().install(Optional.of(lombok), eclipseDir, new NeverCalledProvider());
 
         List<String> properties = Files.readLines(new File(eclipseDir, "eclipse.ini"), Charsets.UTF_8);
         assertThat(properties,

@@ -86,7 +86,7 @@ final class Provisioner {
             eclipsePluginInstaller.install(eclipseConfiguration, eclipseDir);
             LombokConfiguration lombok = configuration.getLombok();
             if (configuration.getLombok() != null) {
-                lombokInstaller.install(Optional.fromNullable(lombok), eclipseDir);
+                lombokInstaller.install(Optional.fromNullable(lombok), eclipseDir, infoProvider);
             }
         } else if (configuration.getLombok() != null) {
             log.warn("you need Eclipse configuration to set up lombok");
@@ -112,14 +112,14 @@ final class Provisioner {
             log.info("no DB2 is required");
         }
     }
-    
+
     public void configureWebsphere(Configuration configuration) throws IOException {
         WebSphereProfileConfiguration wasProfileConfiguration = configuration.getWasProfile();
         if (wasProfileConfiguration != null) {
             wasProfileCreator.createAndConfigureProfile(wasProfileConfiguration);
         } else {
             log.info("no WebSphere Configuration is required");
-        } 
+        }
     }
 
 
