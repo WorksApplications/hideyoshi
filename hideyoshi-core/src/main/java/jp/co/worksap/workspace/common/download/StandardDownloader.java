@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
+import jp.co.worksap.workspace.common.UrlCreator;
 import lombok.Cleanup;
 
 public class StandardDownloader extends Downloader {
@@ -18,7 +19,7 @@ public class StandardDownloader extends Downloader {
 
     @Override
     public void download(URI from, File to) throws IOException {
-        URL url = from.toURL();
+        URL url = new UrlCreator().createFrom(from);
         String fileName = url.getFile();
         URLConnection connection = url.openConnection();
 
@@ -27,5 +28,4 @@ public class StandardDownloader extends Downloader {
 
         copyToLocal(to, fileName, in, fileSize);
     }
-
 }

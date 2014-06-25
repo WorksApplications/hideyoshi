@@ -4,10 +4,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 
 import jp.co.worksap.workspace.common.PipingDaemon;
-
+import jp.co.worksap.workspace.common.UrlCreator;
+import jp.co.worksap.workspace.common.download.AuthenticationInfoProvider;
+import jp.co.worksap.workspace.common.download.Downloader;
 import lombok.extern.slf4j.Slf4j;
 
 import com.google.common.base.Joiner;
@@ -19,7 +21,7 @@ import com.google.common.io.Resources;
 public class LombokInstaller {
     private static final String COPIED_FILE_NAME = "lombok.jar";
 
-    public void install(Optional<LombokConfiguration> lombok, File location) {
+    public void install(Optional<LombokConfiguration> lombok, File location, AuthenticationInfoProvider infoProvider) {
         if (!lombok.isPresent()) {
             return;
         }
@@ -27,7 +29,7 @@ public class LombokInstaller {
 
         File downloadedFile;
         try {
-            downloadedFile = download(lombok.get(), location);
+            downloadedFile = download(lombok.get(), location, infoProvider);
             executeInstaller(location, downloadedFile);
         } catch (IOException e) {
             throw new IllegalStateException("fail to install Lombok", e);
@@ -55,19 +57,19 @@ public class LombokInstaller {
         }
     }
 
-    private File download(LombokConfiguration lombok, File location)
+    private File download(LombokConfiguration lombok, File location, AuthenticationInfoProvider infoProvider)
             throws IOException {
         if (lombok.getDownloadFrom().isPresent()) {
-            // TODO support remote downloading: now we expect that this configuration specify relative path
-            File source = new File(lombok.getDownloadFrom().get());
+            URI lombokUri = lombok.getDownloadFrom().get();
+            Downloader downloader = Downloader.createFor(lombokUri, infoProvider);
             File copied = new File(location, COPIED_FILE_NAME);
-            Files.copy(source, copied);
+            downloader.download(lombokUri, copied);
             return copied;
         }
 
-        URL downloadUrl = lombok.getUrlToDownload();
+        URI downloadUri = lombok.getUrlToDownload();
         File localCopy = new File(location, COPIED_FILE_NAME);
-        Resources.copy(downloadUrl, Files.asByteSink(localCopy).openStream());
+        Resources.copy(new UrlCreator().createFrom(downloadUri), Files.asByteSink(localCopy).openStream());
         return localCopy;
     }
 

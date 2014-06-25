@@ -58,7 +58,7 @@ public class ProvisionerTest {
     private GitInitializer gitInitializer;
 
     private Configuration configuration;
-    private AuthenticationInfoProvider infoProvider = new NeverCalledProvider();
+    private final AuthenticationInfoProvider infoProvider = new NeverCalledProvider();
 
     @Before
     public void buildConfiguration() {
@@ -116,7 +116,7 @@ public class ProvisionerTest {
         configuration.setEclipse(new EclipseConfiguration(Version.fromString("juno"), "UTF-8", pluginList, null, null, null));
         configuration.setLombok(LombokConfiguration.fromString("1.12.2"));
         assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasProfile, gitInitializer).execute(configuration, infoProvider), is(StatusCode.NORMAL));
-        verify(lombokInstaller, only()).install(Matchers.<Optional<LombokConfiguration>> any(), any(File.class));
+        verify(lombokInstaller, only()).install(Matchers.<Optional<LombokConfiguration>> any(), any(File.class), same(infoProvider));
     }
 
     @Test
@@ -125,6 +125,6 @@ public class ProvisionerTest {
         // even though lombok config exists, we need eclipse config
         configuration.setLombok(LombokConfiguration.fromString("1.12.2"));
         assertThat(new Provisioner(packageManagerFacade, eclipseInstaller, eclipsePluginInstaller, lombokInstaller, db2Installer, wasInstaller, wasProfile, gitInitializer).execute(configuration, infoProvider), is(StatusCode.NORMAL));
-        verify(lombokInstaller, never()).install(Matchers.<Optional<LombokConfiguration>> any(), any(File.class));
+        verify(lombokInstaller, never()).install(Matchers.<Optional<LombokConfiguration>> any(), any(File.class), same(infoProvider));
     }
 }

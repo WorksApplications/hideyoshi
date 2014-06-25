@@ -2,9 +2,7 @@ package jp.co.worksap.workspace.lombok;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,18 +24,14 @@ public class LombokConfiguration {
     private String version;
 
     @Nullable
-    private String downloadFrom;
+    private URI downloadFrom;
 
-    URL getUrlToDownload() {
-        try {
-            return URI.create(String.format("https://projectlombok.googlecode.com/files/lombok-%s.jar", version)).toURL();
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException(e);
-        }
+    URI getUrlToDownload() {
+        return URI.create(String.format("https://projectlombok.googlecode.com/files/lombok-%s.jar", version));
     }
 
     @Nonnull
-    Optional<String> getDownloadFrom() {
+    Optional<URI> getDownloadFrom() {
         return Optional.fromNullable(downloadFrom);
     }
 

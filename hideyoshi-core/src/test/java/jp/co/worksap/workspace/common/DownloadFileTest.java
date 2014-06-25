@@ -19,19 +19,10 @@ import com.google.common.io.Files;
 public class DownloadFileTest {
     private final AuthenticationInfoProvider infoProvider = new NeverCalledProvider();
 
-    private String relativeToAbsolutePath(String url) throws IOException {
-        if (url.startsWith("./")) {
-            String simplePath = Files.simplifyPath(new File(".").getAbsolutePath().replace('\\', '/'));
-            return new File(simplePath, url.substring(2)).toURI().toURL().toString();
-        } else {
-            return url;
-        }
-    }
-
     @Test
     public void downloadFileLocal() throws IOException {
         File downloadedFile = File.createTempFile("eclipse", ".download");
-        URL url = new URL(relativeToAbsolutePath("./src/test/resources/.gitignore"));
+        URL url = new UrlCreator().createFrom("./src/test/resources/.gitignore");
         Downloader downloadFile = Downloader.createFor(url, infoProvider);
         downloadFile.download(url, downloadedFile);
         assertTrue(Files.equal(new File("src/test/resources", ".gitignore"), downloadedFile));

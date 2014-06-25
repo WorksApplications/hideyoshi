@@ -1,5 +1,7 @@
 package jp.co.worksap.workspace.common.download;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +40,9 @@ abstract class AbsHttpDownloader extends Downloader {
 
     @Override
     public final void download(URI from, File to) throws IOException {
+        checkArgument(from.isAbsolute());
+        checkArgument(! from.isOpaque());
+
         HttpHost targetHost = new HttpHost(from.getHost(), from.getPort(), from.getScheme());
         HttpClientContext localContext = buildClientContextFor(targetHost);
         HttpGet httpGet = new HttpGet(from);
