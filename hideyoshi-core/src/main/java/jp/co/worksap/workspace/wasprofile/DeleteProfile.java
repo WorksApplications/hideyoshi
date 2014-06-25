@@ -1,10 +1,10 @@
 package jp.co.worksap.workspace.wasprofile;
 
-public class DeleteProfile {    
+public class DeleteProfile {
     private String profileName;
     private String installPath;
     private String serverName;
-    
+
     public void readConfig(WebSphereProfileConfiguration wasConfig){
         profileName = wasConfig.getProfileName();
         serverName = wasConfig.getServerName();
@@ -12,40 +12,38 @@ public class DeleteProfile {
     }
 
     public String getStopServerScript(){
-        String tmp="";        
+        String tmp="";
         tmp+="cd "+installPath+"\\WebSphere\\AppServer\\bin\n";
-        tmp+="stopServer "+serverName+"\n";            
+        tmp+="stopServer "+serverName+"\n";
         return tmp;
-        
+
     }
-    
+
     public String getDeleteProfileScript(){
-        String tmp="";  
+        String tmp="";
         tmp+="cd "+installPath+"\\WebSphere\\AppServer\\bin\n";
-        tmp+="manageprofiles -delete -profileName "+profileName+"\n";             
+        tmp+="manageprofiles -delete -profileName "+profileName+"\n";
         return tmp;
     }
-    
+
     public String getUpdateRegistryScript(){
-        String tmp="";  
+        String tmp="";
         tmp+="cd "+installPath+"\\WebSphere\\AppServer\\bin\n";
-        tmp+="manageprofiles -validateAndUpdateRegistry\n";           
+        tmp+="manageprofiles -validateAndUpdateRegistry\n";
         return tmp;
     }
-    
+
     public String getDeleteLogsScript(){
-        String tmp="";  
-        tmp+="rmdir /s /q \""+installPath+"\\WebSphere\\AppServer\\profiles\\"+profileName+"\"\n";           
+        String tmp="";
+        tmp+="rmdir /s /q \""+installPath+"\\WebSphere\\AppServer\\profiles\\"+profileName+"\"\n";
         return tmp;
     }
- 
-    
+
     public String getStartServerScript(){
-        String tmp="";          
+        String tmp="";
         tmp+="cd "+installPath+"\\WebSphere\\AppServer\\bin\n";
-        tmp+="startServer "+serverName+"\n";  ;       
+        tmp+="startServer "+serverName+"\n";  ;
         return tmp;
     }
-    
-    
+
 }

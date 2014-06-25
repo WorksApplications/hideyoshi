@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class JDBCProviderConfiguration {   
+public class JDBCProviderConfiguration {
     private String scope;
     private String databaseType;
     private String providerType;
@@ -19,6 +19,6 @@ public class JDBCProviderConfiguration {
     private String description;
     private String implementationClassName;
     private String classpath;
-    private String nativePath;	
+    private String nativePath;
     private String isolated;
 }

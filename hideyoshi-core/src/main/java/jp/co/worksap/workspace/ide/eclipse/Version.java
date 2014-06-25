@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.InputStream;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
@@ -39,7 +40,7 @@ public class Version implements Comparable<Version> {
         return new VersionLiteralConverter().apply(string);
     }
 
-    @Nonnull
+    @CheckForNull
     InputStream loadUrlInformation() {
         return getClass().getResourceAsStream(String.format("downloads-%d.%d.%d.properties", major, minor, patch));
     }
