@@ -60,7 +60,7 @@
             <configuration>
               <rules>
                 <requireJavaVersion>
-                  <version>[1.7.0,)</version>
+                  <version>[1.8.0,)</version>
                 </requireJavaVersion>
                 <requireMavenVersion>
                   <version>[3.1.1,)</version>
@@ -73,8 +73,8 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
@@ -205,7 +205,7 @@
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
-        <version>1.12.2</version>
+        <version>1.14.2</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
