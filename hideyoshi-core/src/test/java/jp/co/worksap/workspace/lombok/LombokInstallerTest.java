@@ -104,7 +104,7 @@ public class LombokInstallerTest {
         Version juno = Version.fromString("juno");
         downloadFrom.put(OperatingSystem.create(), ZIP_FILE_PATH);
 
-        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null);
+        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null, null);
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();

@@ -59,7 +59,7 @@ public class EclipseInstallerTest {
         Version juno = Version.fromString("juno");
         downloadFrom.put(OperatingSystem.create(), ZIP_FILE_PATH);
 
-        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null);
+        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null, null);
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
@@ -77,7 +77,7 @@ public class EclipseInstallerTest {
         downloadFrom.put(OperatingSystem.create(), ZIP_FILE_PATH);
         String simplePath = simplePathOf(ZIP_FILE_PATH);
 
-        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null);
+        EclipseConfiguration configuration = new EclipseConfiguration(juno, null, null, null, downloadFrom, null, null);
         EclipseInstaller eclipseInstaller = new EclipseInstaller();
         assertThat(eclipseInstaller.findDownloadUrl(configuration), is(new File(simplePath).toURI().toURL().toString()));
     }
@@ -91,7 +91,7 @@ public class EclipseInstallerTest {
         EclipseConfiguration configuration = new EclipseConfiguration(juno, null,
                 Lists.newArrayList(EclipsePlugin.of("egit")),
                 Lists.newArrayList("http://download.eclipse.org/egit/updates/"),
-                downloadFrom, null);
+                downloadFrom, null, null);
         File targetDir = folder.newFolder();
 
         // generate directory: installer should find it and skip installation

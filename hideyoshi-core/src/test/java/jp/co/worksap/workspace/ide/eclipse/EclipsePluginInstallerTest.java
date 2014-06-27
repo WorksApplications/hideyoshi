@@ -62,7 +62,7 @@ public class EclipsePluginInstallerTest {
         EclipseConfiguration configuration = new EclipseConfiguration(juno, null,
                 Lists.newArrayList(EclipsePlugin.of("org.eclipse.cdt.feature.group", "8.2.1.201309180223")),
                 Lists.newArrayList("http://download.eclipse.org/tools/cdt/releases/kepler"),
-                downloadFrom, null);
+                downloadFrom, null, null);
         File targetDir = folder.newFolder();
 
         EclipseInstaller eclipseInstaller = new EclipseInstaller();

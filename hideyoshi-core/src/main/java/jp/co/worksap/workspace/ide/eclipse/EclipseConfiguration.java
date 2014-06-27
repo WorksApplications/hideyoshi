@@ -33,6 +33,7 @@ public class EclipseConfiguration {
     @JsonDeserialize(keyUsing = OperatingSystemKeyDeserializer.class)
     private Map<OperatingSystem, String> downloadFrom;
     private FindBugsPluginConfiguration findbugs;
+    private JavaFormatterConfiguration javaFormat;
 
     @Nonnull
     public Charset getDefaultCharset() {
@@ -73,5 +74,10 @@ public class EclipseConfiguration {
     @Nonnull
     public Optional<FindBugsPluginConfiguration> getFindbugs() {
         return Optional.fromNullable(findbugs);
+    }
+
+    @Nonnull
+    public Optional<JavaFormatterConfiguration> getJavaFormat() {
+        return Optional.fromNullable(javaFormat);
     }
 }

@@ -1,0 +1,4 @@
+this line will be ignored, because it has no proper prefix.
+org.eclipse.jdt.core.formatter.lineSplit=80
+org.eclipse.jdt.core.formatter.tabulation.char=space
+org.eclipse.jdt.core.formatter.tabulation.size=2

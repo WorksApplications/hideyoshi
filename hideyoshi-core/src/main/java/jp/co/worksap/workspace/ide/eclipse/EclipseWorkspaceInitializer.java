@@ -33,6 +33,7 @@ public class EclipseWorkspaceInitializer {
         }
 
         new FindBugsPluginConfigurator().configure(config.getFindbugs(), workspace);
+        new JavaFormatterConfigurator().configure(config.getJavaFormat(), workspace);
     }
 
     private void createPrefFiles(File workspace, Charset defaultCharset) throws IOException {
